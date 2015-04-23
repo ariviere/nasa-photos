@@ -5,13 +5,32 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ar.nasawallpapers.models.Photo;
+import com.ar.nasawallpapers.services.APODClient;
+import com.ar.nasawallpapers.services.ServicesGenerator;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 
 public class MainActivity extends ActionBarActivity {
+
+
+    public static final String GOV_DATAS_URL = "https://api.data.gov";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        APODClient client =
+                ServicesGenerator.createService(APODClient.class, GOV_DATAS_URL);
+
+        Photo photo = client.photo("2014-01-02", true, "DEMO_KEY");
+
+        String s = "fdsf";
     }
 
     @Override
