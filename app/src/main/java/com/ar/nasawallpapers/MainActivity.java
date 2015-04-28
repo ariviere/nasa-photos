@@ -7,18 +7,20 @@ import android.view.MenuItem;
 
 import com.ar.nasawallpapers.models.Photo;
 import com.ar.nasawallpapers.services.APODClient;
+import com.ar.nasawallpapers.services.APODParser;
+import com.ar.nasawallpapers.services.RetrofitTools;
 import com.ar.nasawallpapers.services.ServicesGenerator;
 
-import rx.Observable;
+import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends ActionBarActivity {
 
 
     public static final String GOV_DATAS_URL = "https://api.data.gov";
+
+    private Photo mPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +30,17 @@ public class MainActivity extends ActionBarActivity {
         APODClient client =
                 ServicesGenerator.createService(APODClient.class, GOV_DATAS_URL);
 
-        Photo photo = client.photo("2014-01-02", true, "DEMO_KEY");
-
-        String s = "fdsf";
+        AndroidObservable.bindActivity(this,
+                client.getPhoto("2014-01-02", true, "DEMO_KEY")
+                        .map(RetrofitTools.transformToString)
+                        .onErrorReturn(RetrofitTools.errorHandling)
+                        .map(APODParser.PARSE_APOD))
+                .subscribe(new Action1<Photo>() {
+                    @Override
+                    public void call(Photo photo) {
+                        mPhoto = photo;
+                    }
+                });
     }
 
     @Override
