@@ -1,73 +1,74 @@
 package com.ar.tothestars;
 
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ar.tothestars.adapters.PhotosPagerAdapter;
 import com.ar.tothestars.models.Photo;
 import com.ar.tothestars.services.APODManager;
 import com.ar.tothestars.services.APODParser;
-import com.ar.tothestars.ui.PaletteTransformation;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
-    private static final String PHOTO = "photo";
+    private static final String PHOTOS = "photos";
 
-    private Photo mPhoto;
+    private SimpleDateFormat mDateFormat;
+    private Calendar calendarReference;
 
-    private ImageView mPhotoView;
-    private PhotoViewAttacher mPhotoViewAttacher;
-
+    private ViewPager mPhotosPager;
+    private ArrayList<Photo> mPhotos;
+    private PhotosPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPhotoView = (ImageView) findViewById(R.id.photo);
+        mPhotosPager = (ViewPager) findViewById(R.id.photos_pager);
+
+        mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        calendarReference = Calendar.getInstance();
 
         if (savedInstanceState != null) {
-            mPhoto = savedInstanceState.getParcelable(PHOTO);
+            mPhotos = savedInstanceState.getParcelableArrayList(PHOTOS);
         }
 
-        if (mPhoto == null) {
-            getPhoto();
+        if (mPhotos == null) {
+            Calendar calendar = (Calendar)calendarReference.clone();
+            getPhoto(calendar.getTime());
         } else {
-            showPhoto();
+            initViewPager();
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(PHOTO, mPhoto);
+        outState.putParcelableArrayList(PHOTOS, mPhotos);
     }
 
-    private void getPhoto() {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        String dateFormatted = sdf.format(calendar.getTime());
+    private void getPhoto(Date date) {
+        String dateFormatted = mDateFormat.format(date);
 
         APODManager.getClient()
                 .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<String>() {
                     @Override
                     public void success(String s, Response response) {
-                        mPhoto = APODParser.getPhoto(s);
-                        showPhoto();
+                        addPhoto(APODParser.getPhoto(s));
                     }
 
                     @Override
@@ -77,30 +78,41 @@ public class MainActivity extends ActionBarActivity {
                 });
     }
 
-    private void showPhoto() {
-        Picasso.with(this)
-                .load(mPhoto.getUrl())
-                .fit()
-                .centerInside()
-                .transform(PaletteTransformation.instance())
-                .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
-                    @Override
-                    public void onSuccess() {
+    private void addPhoto(Photo photo) {
+        if (mPhotos == null) {
+            mPhotos = new ArrayList<>();
 
-                        //give gestures to the photo
-                        if (mPhotoViewAttacher != null) {
-                            mPhotoViewAttacher.update();
-                        } else {
-                            mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
-                        }
+            initViewPager();
+        }
 
-//                        //get palette
-//                        Bitmap bitmap = ((BitmapDrawable) mPhotoView.getDrawable()).getBitmap(); // Ew!
-//                        Palette palette = PaletteTransformation.getPalette(bitmap);
-//                        int mutedDark = palette.getDarkMutedColor(0x000000);
-//                        mPhotoView.setBackgroundColor(mutedDark);
-                    }
-                });
+        mPhotos.add(photo);
+
+        if (mPhotos.size() <= 3) {
+            getPhoto(getNextDate());
+        }
+
+        mAdapter.notifyDataSetChanged();
     }
+
+    private Date getNextDate() {
+        Calendar calendar = (Calendar) calendarReference.clone();
+        calendar.add(Calendar.DATE, -mPhotos.size());
+
+        return calendar.getTime();
+    }
+
+    private void initViewPager() {
+        mAdapter = new PhotosPagerAdapter(this, mPhotos);
+        mPhotosPager.setAdapter(mAdapter);
+        mPhotosPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                if (position + 3 > mPhotos.size()) {
+                    getPhoto(getNextDate());
+                }
+            }
+        });
+    }
+
 
 }
