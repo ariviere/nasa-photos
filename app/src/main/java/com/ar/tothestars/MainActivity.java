@@ -27,11 +27,13 @@ public class MainActivity extends ActionBarActivity {
     private static final String PHOTOS = "photos";
 
     private SimpleDateFormat mDateFormat;
-    private Calendar calendarReference;
+    private Calendar mCalendarReference;
 
     private ViewPager mPhotosPager;
     private ArrayList<Photo> mPhotos;
     private PhotosPagerAdapter mAdapter;
+
+    private int mPhotosWithError = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +43,19 @@ public class MainActivity extends ActionBarActivity {
         mPhotosPager = (ViewPager) findViewById(R.id.photos_pager);
 
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        calendarReference = Calendar.getInstance();
+        mCalendarReference = Calendar.getInstance();
 
         if (savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(PHOTOS);
+        } else {
+            mPhotos = new ArrayList<>();
         }
 
-        if (mPhotos == null) {
-            Calendar calendar = (Calendar)calendarReference.clone();
+        initViewPager();
+
+        if (mPhotos.size() == 0) {
+            Calendar calendar = (Calendar) mCalendarReference.clone();
             getPhoto(calendar.getTime());
-        } else {
-            initViewPager();
         }
     }
 
@@ -61,8 +65,8 @@ public class MainActivity extends ActionBarActivity {
         outState.putParcelableArrayList(PHOTOS, mPhotos);
     }
 
-    private void getPhoto(Date date) {
-        String dateFormatted = mDateFormat.format(date);
+    private void getPhoto(Date photoDate) {
+        String dateFormatted = mDateFormat.format(photoDate);
 
         APODManager.getClient()
                 .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<String>() {
@@ -79,13 +83,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addPhoto(Photo photo) {
-        if (mPhotos == null) {
-            mPhotos = new ArrayList<>();
-
-            initViewPager();
+        if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
+            mPhotos.add(photo);
+        } else {
+            mPhotosWithError++;
         }
-
-        mPhotos.add(photo);
 
         if (mPhotos.size() <= 3) {
             getPhoto(getNextDate());
@@ -95,8 +97,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private Date getNextDate() {
-        Calendar calendar = (Calendar) calendarReference.clone();
-        calendar.add(Calendar.DATE, -mPhotos.size());
+        Calendar calendar = (Calendar) mCalendarReference.clone();
+        calendar.add(Calendar.DATE, -(mPhotos.size() + mPhotosWithError));
 
         return calendar.getTime();
     }
@@ -104,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
     private void initViewPager() {
         mAdapter = new PhotosPagerAdapter(this, mPhotos);
         mPhotosPager.setAdapter(mAdapter);
-        mPhotosPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+        mPhotosPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (position + 3 > mPhotos.size()) {
@@ -113,6 +115,5 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
-
 
 }

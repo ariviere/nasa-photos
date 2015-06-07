@@ -1,7 +1,5 @@
 package com.ar.tothestars.services;
 
-import org.json.JSONObject;
-
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Query;

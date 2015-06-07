@@ -21,6 +21,9 @@ public class Photo implements Parcelable {
         }
     };
 
+    public static final String VIMEO = "player.vimeo.com";
+    public static final String YOUTUBE = "www.youtube.com";
+
     private String name;
     private String url;
     private String explanation;
@@ -91,5 +94,15 @@ public class Photo implements Parcelable {
 
     public void setConcepts(ArrayList<String> concepts) {
         this.concepts = concepts;
+    }
+
+    public boolean isValid() {
+        if (getUrl().contains(VIMEO)) {
+            return false;
+        } else if (getUrl().contains(YOUTUBE)) {
+            return false;
+        }
+
+        return true;
     }
 }
