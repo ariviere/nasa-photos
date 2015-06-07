@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void getPhoto() {
         APODManager.getClient()
-                .getPhoto("2014-01-02", true, "DEMO_KEY", new Callback<String>() {
+                .getPhoto("2014-01-02", true, Credentials.NASA_KEY, new Callback<String>() {
                     @Override
                     public void success(String s, Response response) {
                         mPhoto = APODParser.getPhoto(s);
