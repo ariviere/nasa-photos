@@ -1,4 +1,4 @@
-package com.ar.nasawallpapers.models;
+package com.ar.tothestars.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
