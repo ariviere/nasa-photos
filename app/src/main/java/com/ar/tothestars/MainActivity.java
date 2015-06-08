@@ -8,7 +8,6 @@ import android.widget.Toast;
 import com.ar.tothestars.adapters.PhotosPagerAdapter;
 import com.ar.tothestars.models.Photo;
 import com.ar.tothestars.services.APODManager;
-import com.ar.tothestars.services.APODParser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,10 +68,10 @@ public class MainActivity extends ActionBarActivity {
         String dateFormatted = mDateFormat.format(photoDate);
 
         APODManager.getClient()
-                .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<String>() {
+                .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<Photo>() {
                     @Override
-                    public void success(String s, Response response) {
-                        addPhoto(APODParser.getPhoto(s));
+                    public void success(Photo photo, Response response) {
+                        addPhoto(photo);
                     }
 
                     @Override
