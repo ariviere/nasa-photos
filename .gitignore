@@ -68,3 +68,6 @@ crashlytics-build.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 app/src/main/java/com/ar/tothestars/Credentials.java
+.idea/misc.xml
+app/app.iml
+NASAWallpapers.iml
