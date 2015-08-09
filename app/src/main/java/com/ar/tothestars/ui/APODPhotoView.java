@@ -2,14 +2,13 @@ package com.ar.tothestars.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ar.tothestars.R;
-import com.ar.tothestars.models.Photo;
+import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
 
 import uk.co.senab.photoview.PhotoView;
@@ -19,7 +18,7 @@ import uk.co.senab.photoview.PhotoView;
  */
 public class APODPhotoView extends RelativeLayout {
 
-    private Photo mPhoto;
+    private APODPhoto mPhoto;
 
     private PhotoView mPhotoView;
     private TextView mErrorMessageView;
@@ -53,29 +52,22 @@ public class APODPhotoView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setModel(Photo photo) {
+    public void setModel(APODPhoto photo) {
         mPhoto = photo;
 
         Picasso.with(getContext())
                 .load(mPhoto.getUrl())
                 .fit()
                 .centerInside()
-//                .transform(PaletteTransformation.instance())
                 .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
-//                        //get palette
-//                        Bitmap bitmap = ((BitmapDrawable) mPhotoView.getDrawable()).getBitmap(); // Ew!
-//                        Palette palette = PaletteTransformation.getPalette(bitmap);
-//                        int mutedDark = palette.getDarkMutedColor(0x000000);
-//                        mPhotoView.setBackgroundColor(mutedDark);
-
-                        Log.d("APODPhotoView", "Successfully loaded " + mPhoto.getUrl());
+//                        Log.d("APODPhotoView", "Successfully loaded " + mPhoto.getUrl());
                     }
 
                     @Override
                     public void onError() {
-                        Log.d("APODPhotoView", "Failed to load " + mPhoto.getUrl());
+//                        Log.d("APODPhotoView", "Failed to load " + mPhoto.getUrl());
                         mErrorMessageView.setVisibility(View.VISIBLE);
                     }
                 });

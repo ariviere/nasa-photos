@@ -1,12 +1,14 @@
 package com.ar.tothestars;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.ar.tothestars.adapters.PhotosPagerAdapter;
-import com.ar.tothestars.models.Photo;
+import com.ar.tothestars.adapters.PhotosAdapter;
+import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
 import com.ar.tothestars.services.APODParser;
 
@@ -21,26 +23,39 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
-    private static final String PHOTOS = "photos";
+    private final static String PHOTOS = "photos";
+    private final static int LOADING_PHOTOS_COUNT = 10;
 
     private SimpleDateFormat mDateFormat;
     private Calendar mCalendarReference;
 
-    private ViewPager mPhotosPager;
-    private ArrayList<Photo> mPhotos;
-    private PhotosPagerAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+
+    private ArrayList<APODPhoto> mPhotos;
+    private PhotosAdapter mAdapter;
 
     private int mPhotosWithError = 0;
+
+    private boolean mIsLoadingMore = false;
+    private int mLoadingPhotos = LOADING_PHOTOS_COUNT;
+
+    private Date mCurrentDateRequested;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPhotosPager = (ViewPager) findViewById(R.id.photos_pager);
+        mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
 
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         mCalendarReference = Calendar.getInstance();
@@ -55,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (mPhotos.size() == 0) {
             Calendar calendar = (Calendar) mCalendarReference.clone();
+            mCurrentDateRequested = calendar.getTime();
             getPhoto(calendar.getTime());
         }
     }
@@ -82,34 +98,47 @@ public class MainActivity extends ActionBarActivity {
                 });
     }
 
-    private void addPhoto(Photo photo) {
+    private void addPhoto(APODPhoto photo) {
+        photo.setDate(mCurrentDateRequested);
+        Log.d("Photo loaded", mDateFormat.format(photo.getDate()));
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
             mPhotos.add(photo);
         } else {
             mPhotosWithError++;
         }
 
-        if (mPhotos.size() <= 3) {
+        // load another photo until count is finished
+        if (mLoadingPhotos > 0) {
+            mLoadingPhotos--;
             getPhoto(getNextDate());
+        } else {
+            mIsLoadingMore = false;
+            mAdapter.notifyDataSetChanged();
         }
-
-        mAdapter.notifyDataSetChanged();
     }
 
     private Date getNextDate() {
         Calendar calendar = (Calendar) mCalendarReference.clone();
         calendar.add(Calendar.DATE, -(mPhotos.size() + mPhotosWithError));
 
+        mCurrentDateRequested = calendar.getTime();
+
         return calendar.getTime();
     }
 
     private void initViewPager() {
-        mAdapter = new PhotosPagerAdapter(this, mPhotos);
-        mPhotosPager.setAdapter(mAdapter);
-        mPhotosPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mAdapter = new PhotosAdapter(this, mPhotos);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onPageSelected(int position) {
-                if (position + 3 > mPhotos.size()) {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (!mIsLoadingMore
+                        && mLayoutManager.findLastVisibleItemPosition() > mPhotos.size() - 3) {
+                    mIsLoadingMore = true;
+                    mLoadingPhotos = LOADING_PHOTOS_COUNT;
                     getPhoto(getNextDate());
                 }
             }

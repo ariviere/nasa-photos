@@ -9,15 +9,15 @@ import java.util.Date;
 /**
  * Created by ariviere on 23/04/15.
  */
-public class Photo implements Parcelable {
+public class APODPhoto implements Parcelable {
 
-    public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
-        public Photo createFromParcel(Parcel source) {
-            return new Photo(source);
+    public static final Parcelable.Creator<APODPhoto> CREATOR = new Parcelable.Creator<APODPhoto>() {
+        public APODPhoto createFromParcel(Parcel source) {
+            return new APODPhoto(source);
         }
 
-        public Photo[] newArray(int size) {
-            return new Photo[size];
+        public APODPhoto[] newArray(int size) {
+            return new APODPhoto[size];
         }
     };
 
@@ -30,10 +30,10 @@ public class Photo implements Parcelable {
     private Date date;
     private ArrayList<String> concepts;
 
-    public Photo() {
+    public APODPhoto() {
     }
 
-    private Photo(Parcel in) {
+    private APODPhoto(Parcel in) {
         this.name = in.readString();
         this.url = in.readString();
         this.explanation = in.readString();

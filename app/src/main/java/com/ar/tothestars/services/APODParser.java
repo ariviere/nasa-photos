@@ -1,6 +1,6 @@
 package com.ar.tothestars.services;
 
-import com.ar.tothestars.models.Photo;
+import com.ar.tothestars.models.APODPhoto;
 import com.google.gson.JsonParseException;
 
 import org.json.JSONException;
@@ -12,9 +12,9 @@ import org.json.JSONObject;
  */
 public final class APODParser {
 
-    public static Photo getPhoto(String s) {
+    public static APODPhoto getPhoto(String s) {
         if (!s.equals("error")) {
-            Photo photo = new Photo();
+            APODPhoto photo = new APODPhoto();
 
             try {
                 JSONObject photoJson = new JSONObject(s);

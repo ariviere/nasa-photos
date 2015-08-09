@@ -5,7 +5,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ar.tothestars.models.Photo;
+import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.ui.APODPhotoView;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ import java.util.ArrayList;
 public class PhotosPagerAdapter extends PagerAdapter {
 
     private Context mContext;
-    private ArrayList<Photo> mPhotos;
+    private ArrayList<APODPhoto> mPhotos;
 
-    public PhotosPagerAdapter(Context context, ArrayList<Photo> photos) {
+    public PhotosPagerAdapter(Context context, ArrayList<APODPhoto> photos) {
         mContext = context;
         mPhotos = photos;
     }

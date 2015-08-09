@@ -22,7 +22,6 @@ public class APODManager {
     public static APODClient getClient() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(APOD_URL)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setConverter(new StringConverter())
                 .build();
 
