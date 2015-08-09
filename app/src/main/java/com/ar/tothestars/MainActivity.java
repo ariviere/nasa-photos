@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         mCalendarReference = Calendar.getInstance();
+        mCalendarReference.add(Calendar.HOUR, -2);
 
         if (savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(PHOTOS);

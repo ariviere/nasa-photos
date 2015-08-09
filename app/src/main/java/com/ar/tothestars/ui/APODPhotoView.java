@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,7 +17,7 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by ariviere on 07/06/15.
  */
-public class APODPhotoView extends RelativeLayout {
+public class APODPhotoView extends FrameLayout {
 
     private APODPhoto mPhoto;
 
@@ -58,7 +59,7 @@ public class APODPhotoView extends RelativeLayout {
         Picasso.with(getContext())
                 .load(mPhoto.getUrl())
                 .fit()
-                .centerInside()
+                .centerCrop()
                 .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
