@@ -28,7 +28,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
-    private final static int LOADING_PHOTOS_COUNT = 10;
+    private final static int LOADING_PHOTOS_COUNT = 2;
 
     private SimpleDateFormat mDateFormat;
     private Calendar mCalendarReference;
@@ -56,7 +56,6 @@ public class PhotoActivity extends AppCompatActivity {
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
 
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         mCalendarReference = Calendar.getInstance();
@@ -102,7 +101,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private void addPhoto(APODPhoto photo) {
         photo.setDate(mCurrentDateRequested);
-        Log.d("Photo loaded", mDateFormat.format(photo.getDate()));
+
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
             mPhotos.add(photo);
         } else {
