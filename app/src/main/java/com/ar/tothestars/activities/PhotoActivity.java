@@ -1,4 +1,4 @@
-package com.ar.tothestars;
+package com.ar.tothestars.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ar.tothestars.Credentials;
+import com.ar.tothestars.R;
 import com.ar.tothestars.adapters.PhotosAdapter;
 import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
@@ -22,7 +24,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends AppCompatActivity {
+public class PhotoActivity extends AppCompatActivity {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Toast.makeText(MainActivity.this, getString(R.string.server_error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhotoActivity.this, getString(R.string.server_error), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
