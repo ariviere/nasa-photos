@@ -24,7 +24,7 @@ public class APODPhoto implements Parcelable {
     public static final String VIMEO = "player.vimeo.com";
     public static final String YOUTUBE = "www.youtube.com";
 
-    private String name;
+    private String title;
     private String url;
     private String explanation;
     private Date date;
@@ -34,7 +34,7 @@ public class APODPhoto implements Parcelable {
     }
 
     private APODPhoto(Parcel in) {
-        this.name = in.readString();
+        this.title = in.readString();
         this.url = in.readString();
         this.explanation = in.readString();
         long tmpDate = in.readLong();
@@ -49,19 +49,19 @@ public class APODPhoto implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.name);
+        dest.writeString(this.title);
         dest.writeString(this.url);
         dest.writeString(this.explanation);
         dest.writeLong(date != null ? date.getTime() : -1);
         dest.writeSerializable(this.concepts);
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUrl() {

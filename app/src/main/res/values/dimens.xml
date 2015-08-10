@@ -1,5 +1,5 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="photo_margin">4dp</dimen>
-    <dimen name="photo_cardview_height">300dp</dimen>
+    <dimen name="photo_height">265dp</dimen>
 </resources>

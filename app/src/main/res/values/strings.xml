@@ -5,4 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="server_error">An error occured while trying to communicate with the servers</string>
     <string name="error_message">This photo is not available</string>
+    <string name="fab_share">Share</string>
+    <string name="fab_full_screen">Full Screen</string>
+    <string name="fab_desktop">Use as wallpaper</string>
+    <string name="fab_save">Save</string>
 </resources>

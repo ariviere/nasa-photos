@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ar.tothestars.R;
@@ -21,6 +20,7 @@ public class APODPhotoView extends FrameLayout {
 
     private APODPhoto mPhoto;
 
+    private TextView mPhotoTitle;
     private PhotoView mPhotoView;
     private TextView mErrorMessageView;
 
@@ -56,6 +56,8 @@ public class APODPhotoView extends FrameLayout {
     public void setModel(APODPhoto photo) {
         mPhoto = photo;
 
+        mPhotoTitle.setText(photo.getTitle());
+
         Picasso.with(getContext())
                 .load(mPhoto.getUrl())
                 .fit()
@@ -77,7 +79,8 @@ public class APODPhotoView extends FrameLayout {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.item_photo, this);
 
-        mPhotoView = (PhotoView) findViewById(R.id.photo);
+        mPhotoTitle = (TextView) findViewById(R.id.photo_title);
+        mPhotoView = (PhotoView) findViewById(R.id.photo_src);
         mErrorMessageView = (TextView) findViewById(R.id.error_message);
     }
 }
