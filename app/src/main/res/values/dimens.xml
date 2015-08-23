@@ -2,4 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="photo_margin">4dp</dimen>
     <dimen name="photo_height">265dp</dimen>
+
+    <dimen name="fab_translate_first">95dp</dimen>
+    <dimen name="fab_translate_mid_first">82dp</dimen>
+    <dimen name="fab_translate_mid_second">46dp</dimen>
 </resources>

@@ -40,7 +40,61 @@
         <View
             android:id="@+id/fab_space"
             android:layout_width="1dp"
-            android:layout_height="245dp" />
+            android:layout_height="245dp"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/photo_save_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_favorite"
+            android:layout_alignRight="@+id/photo_plus_fab"
+            android:layout_alignBottom="@+id/photo_plus_fab"
+            app:fabSize="mini"
+            app:elevation="4dp"
+            app:rippleColor="@color/beige"
+            android:alpha="0"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/photo_fullscreen_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fullscreen"
+            android:layout_above="@id/photo_save_fab"
+            android:layout_alignRight="@id/photo_plus_fab"
+            android:layout_alignBottom="@id/photo_plus_fab"
+            app:fabSize="mini"
+            app:elevation="4dp"
+            app:rippleColor="@color/beige"
+            android:alpha="0"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/photo_share_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_share"
+            android:layout_alignBottom="@id/photo_plus_fab"
+            android:layout_alignRight="@id/photo_plus_fab"
+            app:fabSize="mini"
+            app:elevation="4dp"
+            app:rippleColor="@color/beige"
+            android:alpha="0"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/photo_desktop_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_desktop"
+            android:layout_alignRight="@id/photo_plus_fab"
+            android:layout_alignBottom="@id/photo_plus_fab"
+            app:fabSize="mini"
+            app:elevation="4dp"
+            app:rippleColor="@color/beige"
+            android:alpha="0"
+            />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_plus_fab"
@@ -50,61 +104,10 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="12dp"
             android:layout_below="@id/fab_space"
+            app:rippleColor="@color/beige"
             app:fabSize="mini"
             app:elevation="4dp"
             />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/photo_save_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:layout_alignRight="@id/photo_plus_fab"
-            android:layout_alignBottom="@id/photo_plus_fab"
-            android:layout_marginRight="95dp"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/photo_fullscreen_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:layout_above="@id/photo_save_fab"
-            android:layout_alignRight="@id/photo_plus_fab"
-            android:layout_alignBottom="@id/photo_plus_fab"
-            android:layout_marginRight="82dp"
-            android:layout_marginBottom="46dp"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/photo_share_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:layout_alignBottom="@id/photo_plus_fab"
-            android:layout_marginBottom="95dp"
-            android:layout_alignRight="@id/photo_plus_fab"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/photo_desktop_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:layout_alignRight="@id/photo_plus_fab"
-            android:layout_alignBottom="@id/photo_plus_fab"
-            android:layout_marginRight="46dp"
-            android:layout_marginBottom="82dp"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            />
-
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

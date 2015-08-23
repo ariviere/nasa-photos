@@ -1,5 +1,7 @@
 <resources>
     <color name="grey">#787878</color>
-    <color name="midnight_blue">#10153d</color>
-    <color name="classic_blue">#0d3196</color>
+    <color name="blue_darker">#1A2634</color>
+    <color name="blue_dark">#203E5F</color>
+    <color name="yellow">#EEC550</color>
+    <color name="beige">#F9E3A3</color>
 </resources>

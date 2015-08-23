@@ -4,5 +4,5 @@
     android:id="@+id/photos_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/midnight_blue"
+    android:background="@color/blue_darker"
     />
