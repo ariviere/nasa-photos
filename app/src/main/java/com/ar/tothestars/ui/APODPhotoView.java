@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ar.tothestars.R;
 import com.ar.tothestars.models.APODPhoto;
@@ -21,7 +23,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
     private APODPhoto mPhoto;
 
     private TextView mPhotoTitle;
-    private PhotoView mPhotoView;
+    private ImageView mPhotoView;
     private TextView mErrorMessageView;
 
     private View mPlusFab;
@@ -85,6 +87,9 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
             case R.id.photo_desktop_fab:
 
                 break;
+            case R.id.photo_mask:
+                Toast.makeText(getContext(), "Image clicked", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 break;
         }
@@ -138,7 +143,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
         LayoutInflater.from(context).inflate(R.layout.item_photo, this);
 
         mPhotoTitle = (TextView) findViewById(R.id.photo_title);
-        mPhotoView = (PhotoView) findViewById(R.id.photo_src);
+        mPhotoView = (ImageView) findViewById(R.id.photo_src);
         mErrorMessageView = (TextView) findViewById(R.id.error_message);
 
         mPlusFab = findViewById(R.id.photo_plus_fab);
@@ -146,6 +151,8 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
         mFullScreenFab = findViewById(R.id.photo_fullscreen_fab);
         mDesktopFab = findViewById(R.id.photo_desktop_fab);
         mShareFab = findViewById(R.id.photo_share_fab);
+
+        mPhotoView.setOnClickListener(this);
 
         mPlusFab.setOnClickListener(this);
         mSaveFab.setOnClickListener(this);

@@ -13,11 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <uk.co.senab.photoview.PhotoView
+        <ImageView
             android:id="@+id/photo_src"
             android:layout_width="match_parent"
             android:layout_height="@dimen/photo_height"
             android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/app_name" />
 
         <TextView
@@ -33,81 +34,75 @@
             android:id="@+id/photo_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_below="@id/photo_src"
+            android:padding="12dp"
             android:textColor="@color/grey" />
 
         <View
             android:id="@+id/fab_space"
             android:layout_width="1dp"
-            android:layout_height="245dp"
-            />
+            android:layout_height="245dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_save_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_favorite"
-            android:layout_alignRight="@+id/photo_plus_fab"
             android:layout_alignBottom="@+id/photo_plus_fab"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            app:rippleColor="@color/beige"
+            android:layout_alignRight="@+id/photo_plus_fab"
             android:alpha="0"
-            />
+            android:src="@drawable/ic_favorite"
+            app:elevation="4dp"
+            app:fabSize="mini"
+            app:rippleColor="@color/beige" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_fullscreen_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_fullscreen"
             android:layout_above="@id/photo_save_fab"
-            android:layout_alignRight="@id/photo_plus_fab"
             android:layout_alignBottom="@id/photo_plus_fab"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            app:rippleColor="@color/beige"
+            android:layout_alignRight="@id/photo_plus_fab"
             android:alpha="0"
-            />
+            android:src="@drawable/ic_fullscreen"
+            app:elevation="4dp"
+            app:fabSize="mini"
+            app:rippleColor="@color/beige" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_share_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_share"
             android:layout_alignBottom="@id/photo_plus_fab"
             android:layout_alignRight="@id/photo_plus_fab"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            app:rippleColor="@color/beige"
             android:alpha="0"
-            />
+            android:src="@drawable/ic_share"
+            app:elevation="4dp"
+            app:fabSize="mini"
+            app:rippleColor="@color/beige" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_desktop_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_desktop"
-            android:layout_alignRight="@id/photo_plus_fab"
             android:layout_alignBottom="@id/photo_plus_fab"
-            app:fabSize="mini"
-            app:elevation="4dp"
-            app:rippleColor="@color/beige"
+            android:layout_alignRight="@id/photo_plus_fab"
             android:alpha="0"
-            />
+            android:src="@drawable/ic_desktop"
+            app:elevation="4dp"
+            app:fabSize="mini"
+            app:rippleColor="@color/beige" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_plus_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="12dp"
             android:layout_below="@id/fab_space"
-            app:rippleColor="@color/beige"
-            app:fabSize="mini"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_add"
             app:elevation="4dp"
-            />
+            app:fabSize="mini"
+            app:rippleColor="@color/beige" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
