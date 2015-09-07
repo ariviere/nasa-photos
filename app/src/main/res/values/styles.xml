@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -11,6 +11,9 @@
         <!-- colorAccent is used as the default value for colorControlActivated
              which is used to tint widgets -->
         <item name="colorAccent">@color/yellow</item>
+
+        <!-- translucent status bar (only for API 19) -->
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>
