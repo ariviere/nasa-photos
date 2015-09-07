@@ -3,10 +3,14 @@ package com.ar.tothestars.helpers;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.ar.tothestars.R;
 import java.io.IOException;
 
 /**
@@ -47,5 +51,24 @@ public class PhotoHelper {
                     .show();
 
         }
+    }
+
+    /**
+     * Use to share a photo
+     * @param context current context
+     * @param photoBitmap photo to share
+     * @param photoTitle title of the photo to share
+     */
+    public static void sharePicture(Context context, Bitmap photoBitmap, String photoTitle) {
+        // convert bitmap to Uri
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photoBitmap, photoTitle, null);
+        Uri photoUri = Uri.parse(path);
+
+        // share image with Uri
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, photoUri);
+        intent.setType("image/jpeg");
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_photo)));
     }
 }

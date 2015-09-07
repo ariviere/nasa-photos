@@ -85,13 +85,11 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
                 }
                 break;
             case R.id.photo_save_fab:
-
                 break;
             case R.id.photo_share_fab:
-
+                PhotoHelper.sharePicture(getContext(), mPhotoBitmap, mPhoto.getTitle());
                 break;
             case R.id.photo_fullscreen_fab:
-
                 break;
             case R.id.photo_desktop_fab:
                 PhotoHelper.setPictureAsWallpaper(getContext(), mPhotoBitmap);
