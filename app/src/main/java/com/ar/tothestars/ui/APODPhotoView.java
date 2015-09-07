@@ -1,7 +1,12 @@
 package com.ar.tothestars.ui;
 
+import android.app.WallpaperManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -10,8 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ar.tothestars.R;
+import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -21,6 +29,7 @@ import uk.co.senab.photoview.PhotoView;
 public class APODPhotoView extends FrameLayout implements View.OnClickListener, View.OnLongClickListener {
 
     private APODPhoto mPhoto;
+    private Bitmap mPhotoBitmap;
 
     private TextView mPhotoTitle;
     private ImageView mPhotoView;
@@ -85,10 +94,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
 
                 break;
             case R.id.photo_desktop_fab:
-
-                break;
-            case R.id.photo_mask:
-                Toast.makeText(getContext(), "Image clicked", Toast.LENGTH_SHORT).show();
+                PhotoHelper.setPictureAsWallpaper(getContext(), mPhotoBitmap);
                 break;
             default:
                 break;
@@ -128,7 +134,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
                 .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
-//                        Log.d("APODPhotoView", "Successfully loaded " + mPhoto.getUrl());
+                        mPhotoBitmap = ((BitmapDrawable)mPhotoView.getDrawable()).getBitmap();
                     }
 
                     @Override
