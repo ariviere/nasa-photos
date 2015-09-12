@@ -32,7 +32,7 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by ariviere on 07/06/15.
  */
-public class APODPhotoView extends FrameLayout implements View.OnClickListener, View.OnLongClickListener {
+public class APODPhotoView extends FrameLayout implements View.OnClickListener {
 
     private APODPhoto mPhoto;
     private Bitmap mPhotoBitmap;
@@ -108,27 +108,6 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.photo_save_fab:
-
-                break;
-            case R.id.photo_share_fab:
-
-                break;
-            case R.id.photo_fullscreen_fab:
-
-                break;
-            case R.id.photo_desktop_fab:
-
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
-
     public void setModel(APODPhoto photo) {
         mPhoto = photo;
 
@@ -147,7 +126,6 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
 
                     @Override
                     public void onError() {
-//                        Log.d("APODPhotoView", "Failed to load " + mPhoto.getUrl());
                         mErrorMessageView.setVisibility(View.VISIBLE);
                     }
                 });
@@ -174,11 +152,6 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
         mFullScreenFab.setOnClickListener(this);
         mDesktopFab.setOnClickListener(this);
         mShareFab.setOnClickListener(this);
-
-        mSaveFab.setOnLongClickListener(this);
-        mFullScreenFab.setOnLongClickListener(this);
-        mDesktopFab.setOnLongClickListener(this);
-        mShareFab.setOnLongClickListener(this);
 
         mTranslateFirstRange = getResources().getDimension(R.dimen.fab_translate_first);
         mTranslateMidFirstRange = getResources().getDimension(R.dimen.fab_translate_mid_first);
