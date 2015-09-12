@@ -1,6 +1,7 @@
 package com.ar.tothestars.activities;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +24,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PhotosActivity extends AppCompatActivity {
+public class PhotosActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
@@ -32,6 +33,7 @@ public class PhotosActivity extends AppCompatActivity {
     private SimpleDateFormat mDateFormat;
     private Calendar mCalendarReference;
 
+    private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
 
@@ -41,7 +43,7 @@ public class PhotosActivity extends AppCompatActivity {
     private int mPhotosWithError = 0;
 
     private boolean mIsLoadingMore = false;
-    private int mLoadingPhotos = LOADING_PHOTOS_COUNT;
+    private int mLoadingPhotos;
 
     private Date mCurrentDateRequested;
 
@@ -49,6 +51,10 @@ public class PhotosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
+        mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setProgressViewEndTarget(false, 300);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -69,9 +75,7 @@ public class PhotosActivity extends AppCompatActivity {
         initViewPager();
 
         if (mPhotos.size() == 0) {
-            Calendar calendar = (Calendar) mCalendarReference.clone();
-            mCurrentDateRequested = calendar.getTime();
-            getPhoto(calendar.getTime());
+            startGettingPhotos();
         }
     }
 
@@ -79,6 +83,19 @@ public class PhotosActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(PHOTOS, mPhotos);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPhotos.clear();
+        startGettingPhotos();
+    }
+
+    private void startGettingPhotos() {
+        mLoadingPhotos = LOADING_PHOTOS_COUNT;
+        Calendar calendar = (Calendar) mCalendarReference.clone();
+        mCurrentDateRequested = calendar.getTime();
+        getPhoto(calendar.getTime());
     }
 
     private void getPhoto(Date photoDate) {
@@ -114,6 +131,7 @@ public class PhotosActivity extends AppCompatActivity {
         } else {
             mIsLoadingMore = false;
             mAdapter.notifyDataSetChanged();
+            mRefreshLayout.setRefreshing(false);
         }
     }
 
