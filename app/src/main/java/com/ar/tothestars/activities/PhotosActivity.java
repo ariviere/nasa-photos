@@ -72,7 +72,7 @@ public class PhotosActivity extends AppCompatActivity implements SwipeRefreshLay
             mPhotos = new ArrayList<>();
         }
 
-        initViewPager();
+        initRecyclerView();
 
         if (mPhotos.size() == 0) {
             startGettingPhotos();
@@ -144,7 +144,7 @@ public class PhotosActivity extends AppCompatActivity implements SwipeRefreshLay
         return calendar.getTime();
     }
 
-    private void initViewPager() {
+    private void initRecyclerView() {
         mAdapter = new PhotosAdapter(this, mPhotos);
         mRecyclerView.setAdapter(mAdapter);
 
