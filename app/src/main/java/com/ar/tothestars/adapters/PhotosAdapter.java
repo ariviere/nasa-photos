@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.ar.tothestars.models.APODPhoto;
-import com.ar.tothestars.ui.APODPhotoView;
+import com.ar.tothestars.ui.APODPhotoItem;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        ViewHolder viewHolder = new ViewHolder(new APODPhotoView(mContext));
+        ViewHolder viewHolder = new ViewHolder(new APODPhotoItem(mContext));
         return viewHolder;
     }
 
@@ -40,9 +40,9 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private APODPhotoView photoView;
+        private APODPhotoItem photoView;
 
-        public ViewHolder(APODPhotoView view) {
+        public ViewHolder(APODPhotoItem view) {
             super(view);
             photoView = view;
         }

@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ar.tothestars.models.APODPhoto;
-import com.ar.tothestars.ui.APODPhotoView;
+import com.ar.tothestars.ui.APODPhotoItem;
 
 import java.util.ArrayList;
 
@@ -35,16 +35,16 @@ public class PhotosPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        APODPhotoView APODPhotoView = new APODPhotoView(mContext);
-        APODPhotoView.setModel(mPhotos.get(position));
+        APODPhotoItem APODPhotoItem = new APODPhotoItem(mContext);
+        APODPhotoItem.setModel(mPhotos.get(position));
 
-        container.addView(APODPhotoView);
+        container.addView(APODPhotoItem);
 
-        return APODPhotoView;
+        return APODPhotoItem;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((APODPhotoView) object);
+        container.removeView((APODPhotoItem) object);
     }
 }

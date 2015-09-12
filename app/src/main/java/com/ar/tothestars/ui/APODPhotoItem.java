@@ -38,7 +38,7 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by ariviere on 07/06/15.
  */
-public class APODPhotoView extends FrameLayout implements View.OnClickListener {
+public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
 
     private APODPhoto mPhoto;
     private Bitmap mPhotoBitmap;
@@ -58,7 +58,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
     private float mTranslateMidFirstRange;
     private float mTranslateMidSecondRange;
 
-    public APODPhotoView(Context context) {
+    public APODPhotoItem(Context context) {
         super(context);
 
         if (!isInEditMode()) {
@@ -66,7 +66,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public APODPhotoView(Context context, AttributeSet attrs) {
+    public APODPhotoItem(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         if (!isInEditMode()) {
@@ -74,7 +74,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public APODPhotoView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public APODPhotoItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         if (!isInEditMode()) {
