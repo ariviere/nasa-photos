@@ -11,12 +11,20 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.ar.tothestars.R;
+import com.ar.tothestars.activities.SinglePhotoActivity;
+import com.ar.tothestars.models.APODPhoto;
+
 import java.io.IOException;
 
 /**
  * Created by ariviere on 07/09/15.
  */
 public class PhotoHelper {
+
+    /**
+     * photo for activity info transfert
+     */
+    public static final String PHOTO = "photo";
 
     private PhotoHelper() {
     }
@@ -55,9 +63,10 @@ public class PhotoHelper {
 
     /**
      * Use to share a photo
-     * @param context current context
+     *
+     * @param context     current context
      * @param photoBitmap photo to share
-     * @param photoTitle title of the photo to share
+     * @param photoTitle  title of the photo to share
      */
     public static void sharePicture(Context context, Bitmap photoBitmap, String photoTitle) {
         // convert bitmap to Uri
@@ -70,5 +79,19 @@ public class PhotoHelper {
         intent.putExtra(Intent.EXTRA_STREAM, photoUri);
         intent.setType("image/jpeg");
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_photo)));
+    }
+
+    /**
+     * Use to start full screen photo activity
+     * @param context context
+     * @param photo photo to fullscreen
+     */
+    public static void startFullScreen(Context context, APODPhoto photo) {
+        Intent intent = new Intent(context, SinglePhotoActivity.class);
+        intent.putExtra(PHOTO, photo);
+//                ActivityOptionsCompat options = ActivityOptionsCompat
+//                        .makeSceneTransitionAnimation((Activity)getContext(), mPhotoView, "robot");
+//
+        context.startActivity(intent);
     }
 }

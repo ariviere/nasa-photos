@@ -10,4 +10,5 @@
     <string name="fab_desktop">Use as wallpaper</string>
     <string name="fab_save">Save</string>
     <string name="share_photo">Share photo</string>
+    <string name="photo_shared">photo_shared</string>
 </resources>

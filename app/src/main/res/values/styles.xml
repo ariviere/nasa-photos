@@ -14,6 +14,14 @@
 
         <!-- translucent status bar (only for API 19) -->
         <item name="android:windowTranslucentStatus">true</item>
+
+        <!-- enable activity transition -->
+        <item name="android:windowContentTransitions">true</item>
+
+        <!-- share element transition -->
+        <item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>
+        <item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>
+
     </style>
 
 </resources>

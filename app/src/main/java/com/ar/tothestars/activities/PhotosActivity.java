@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.ar.tothestars.Credentials;
@@ -24,7 +23,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PhotoActivity extends AppCompatActivity {
+public class PhotosActivity extends AppCompatActivity {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
@@ -94,7 +93,7 @@ public class PhotoActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Toast.makeText(PhotoActivity.this, getString(R.string.server_error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhotosActivity.this, getString(R.string.server_error), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

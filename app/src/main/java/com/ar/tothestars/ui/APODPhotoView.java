@@ -1,20 +1,26 @@
 package com.ar.tothestars.ui;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ar.tothestars.R;
+import com.ar.tothestars.activities.SinglePhotoActivity;
 import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
@@ -30,6 +36,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
 
     private APODPhoto mPhoto;
     private Bitmap mPhotoBitmap;
+    private View mProgress;
 
     private TextView mPhotoTitle;
     private ImageView mPhotoView;
@@ -89,7 +96,9 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
             case R.id.photo_share_fab:
                 PhotoHelper.sharePicture(getContext(), mPhotoBitmap, mPhoto.getTitle());
                 break;
+            case R.id.photo_src:
             case R.id.photo_fullscreen_fab:
+                PhotoHelper.startFullScreen(getContext(), mPhoto);
                 break;
             case R.id.photo_desktop_fab:
                 PhotoHelper.setPictureAsWallpaper(getContext(), mPhotoBitmap);
@@ -133,6 +142,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
                     @Override
                     public void onSuccess() {
                         mPhotoBitmap = ((BitmapDrawable)mPhotoView.getDrawable()).getBitmap();
+                        mProgress.animate().alpha(0);
                     }
 
                     @Override
@@ -149,6 +159,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener, 
         mPhotoTitle = (TextView) findViewById(R.id.photo_title);
         mPhotoView = (ImageView) findViewById(R.id.photo_src);
         mErrorMessageView = (TextView) findViewById(R.id.error_message);
+        mProgress = findViewById(R.id.progress);
 
         mPlusFab = findViewById(R.id.photo_plus_fab);
         mSaveFab = findViewById(R.id.photo_save_fab);

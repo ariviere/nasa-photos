@@ -19,6 +19,7 @@
             android:layout_height="@dimen/photo_height"
             android:layout_gravity="center"
             android:background="@android:color/black"
+            android:transitionName="@string/photo_shared"
             android:contentDescription="@string/app_name" />
 
         <TextView
@@ -41,7 +42,8 @@
         <View
             android:id="@+id/fab_space"
             android:layout_width="1dp"
-            android:layout_height="245dp" />
+            android:layout_height="245dp"
+            android:layout_marginRight="12dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/photo_save_fab"
@@ -96,13 +98,22 @@
             android:id="@+id/photo_plus_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@id/fab_space"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="12dp"
             android:src="@drawable/ic_add"
             app:elevation="4dp"
             app:fabSize="mini"
             app:rippleColor="@color/beige" />
+
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
 
 </android.support.v7.widget.CardView>
