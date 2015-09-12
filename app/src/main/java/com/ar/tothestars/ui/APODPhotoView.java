@@ -6,6 +6,7 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -26,7 +27,12 @@ import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -77,11 +83,6 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
     }
 
     @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.photo_plus_fab:
@@ -113,6 +114,7 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
 
         mPhotoTitle.setText(photo.getTitle());
 
+        // display photo with picasso
         Picasso.with(getContext())
                 .load(mPhoto.getUrl())
                 .fit()
@@ -120,13 +122,27 @@ public class APODPhotoView extends FrameLayout implements View.OnClickListener {
                 .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
-                        mPhotoBitmap = ((BitmapDrawable)mPhotoView.getDrawable()).getBitmap();
                         mProgress.animate().alpha(0);
                     }
 
                     @Override
                     public void onError() {
                         mErrorMessageView.setVisibility(View.VISIBLE);
+                    }
+                });
+
+        // get base bitmap of the photo
+        Observable.just(mPhoto.getUrl())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        try {
+                            URL url = new URL(s);
+                            mPhotoBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
     }

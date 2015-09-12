@@ -1,9 +1,7 @@
 package com.ar.tothestars.activities;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.ar.tothestars.R;
 import com.ar.tothestars.helpers.PhotoHelper;
