@@ -24,4 +24,10 @@
 
     </style>
 
+    <!-- Style for the main container of an activity, handle top offset !-->
+    <style name="AppTheme.MainContainer">
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:layout_marginTop">0dp</item>
+    </style>
+
 </resources>

@@ -1,36 +1,115 @@
 package com.ar.tothestars.activities;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
-import com.ar.tothestars.Credentials;
 import com.ar.tothestars.R;
-import com.ar.tothestars.adapters.PhotosAdapter;
-import com.ar.tothestars.models.APODPhoto;
-import com.ar.tothestars.services.APODManager;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import com.ar.tothestars.adapters.CategoriesAdapter;
 
 
-public class PhotosActivity extends AppCompatActivity {
+public class PhotosActivity extends AppCompatActivity implements View.OnClickListener,
+    ViewPager.OnPageChangeListener, CategoriesAdapter.Listener {
+
+    private ViewPager mViewPager;
+    private CategoriesAdapter mAdapter;
+    private View mBrowseButton;
+    private View mFavoritesButton;
+    private View mButtonsContainer;
+    private boolean mButtonsContainerHidden = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mAdapter = new CategoriesAdapter(this);
+        mAdapter.setListener(this);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.addOnPageChangeListener(this);
+
+
+        mButtonsContainer = findViewById(R.id.buttons_container);
+        mBrowseButton = findViewById(R.id.browse_button);
+        mFavoritesButton = findViewById(R.id.favorites_button);
+
+        mBrowseButton.setOnClickListener(this);
+        mFavoritesButton.setOnClickListener(this);
+
+        mFavoritesButton.setSelected(true);
+        mBrowseButton.setSelected(true);
+
+        mFavoritesButton.setSelected(false);
+        mBrowseButton.setSelected(true);
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.browse_button:
+                mViewPager.setCurrentItem(0);
+                mBrowseButton.setSelected(true);
+                mFavoritesButton.setSelected(false);
+                break;
 
+            case R.id.favorites_button:
+                mViewPager.setCurrentItem(1);
+                mBrowseButton.setSelected(false);
+                mFavoritesButton.setSelected(true);
+                break;
+
+            default:
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        switch (position) {
+            case 0:
+                mBrowseButton.setSelected(true);
+                mFavoritesButton.setSelected(false);
+                break;
+            case 1:
+                mBrowseButton.setSelected(false);
+                mFavoritesButton.setSelected(true);
+                break;
+            default:
+
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+    }
+
+    @Override
+    public void onRecyclerScrolled(int dy, int recyclerScrollY) {
+        if (dy > 0 && recyclerScrollY > mButtonsContainer.getHeight()) {
+            hideButtonsContainer();
+        } else if (dy < 0) {
+            showButtonsContainer();
+        }
+    }
+
+    private void hideButtonsContainer() {
+        if (!mButtonsContainerHidden) {
+            mButtonsContainerHidden = true;
+            mButtonsContainer.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height));
+        }
+    }
+
+    private void showButtonsContainer() {
+        if (mButtonsContainerHidden) {
+            mButtonsContainerHidden = false;
+            mButtonsContainer.animate().translationY(0);
+        }
+    }
 }

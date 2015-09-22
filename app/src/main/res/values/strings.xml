@@ -11,4 +11,6 @@
     <string name="fab_save">Save</string>
     <string name="share_photo">Share photo</string>
     <string name="photo_shared">photo_shared</string>
+    <string name="browse">Browse</string>
+    <string name="favorites">Favorites</string>
 </resources>

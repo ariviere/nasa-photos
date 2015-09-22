@@ -6,4 +6,6 @@
     <dimen name="fab_translate_first">95dp</dimen>
     <dimen name="fab_translate_mid_first">82dp</dimen>
     <dimen name="fab_translate_mid_second">46dp</dimen>
+    <dimen name="main_menu_buttons_height">72dp</dimen>
+    <dimen name="shadow_height">10dp</dimen>
 </resources>

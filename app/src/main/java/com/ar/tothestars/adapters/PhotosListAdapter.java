@@ -12,12 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by ariviere on 09/08/15.
  */
-public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder> {
+public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.ViewHolder> {
 
     private final Context mContext;
     private ArrayList<APODPhoto> mPhotos;
 
-    public PhotosAdapter(Context context, ArrayList<APODPhoto> mPhotos) {
+    public PhotosListAdapter(Context context, ArrayList<APODPhoto> mPhotos) {
         this.mContext = context;
         this.mPhotos = mPhotos;
     }

@@ -6,12 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.ar.tothestars.Credentials;
 import com.ar.tothestars.R;
-import com.ar.tothestars.adapters.PhotosAdapter;
+import com.ar.tothestars.adapters.PhotosListAdapter;
 import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
 
@@ -42,7 +43,7 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     private LinearLayoutManager mLayoutManager;
 
     private ArrayList<APODPhoto> mPhotos;
-    private PhotosAdapter mAdapter;
+    private PhotosListAdapter mAdapter;
 
     private int mPhotosWithError = 0;
 
@@ -50,6 +51,9 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     private int mLoadingPhotos;
 
     private Date mCurrentDateRequested;
+    private Listener mListener;
+
+    private int mRecyclerScrollY = 0;
 
     public APODPhotosList(Context context) {
         super(context);
@@ -79,6 +83,15 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     public void onRefresh() {
         mPhotos.clear();
         startGettingPhotos();
+    }
+
+    /**
+     * set listener
+     *
+     * @param listener listener
+     */
+    public void setListener(Listener listener) {
+        mListener = listener;
     }
 
     private void startGettingPhotos() {
@@ -135,13 +148,16 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     }
 
     private void initRecyclerView() {
-        mAdapter = new PhotosAdapter(getContext(), mPhotos);
+        mAdapter = new PhotosListAdapter(getContext(), mPhotos);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+                mRecyclerScrollY += dy;
+                mListener.onRecyclerScrolled(dy, mRecyclerScrollY);
 
                 if (!mIsLoadingMore
                         && mLayoutManager.findLastVisibleItemPosition() > mPhotos.size() - 3) {
@@ -153,15 +169,25 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
         });
     }
 
-    private void init(Context context) {
+    private void init(final Context context) {
         LayoutInflater.from(context).inflate(R.layout.item_photos_list, this);
 
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
         mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setProgressViewEndTarget(false, 300);
+        mRefreshLayout.setProgressViewEndTarget(false, 400);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
         mRecyclerView.setHasFixedSize(true);
+
+        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                mRecyclerView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height), 0, 0);
+
+                return false;
+            }
+        });
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -178,5 +204,18 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
             startGettingPhotos();
         }
 
+    }
+
+    /**
+     * listener for photos list
+     */
+    public interface Listener {
+        /**
+         * called when recycler view is scrolled
+         *
+         * @param dy              dy
+         * @param recyclerScrollY total scrollY
+         */
+        void onRecyclerScrolled(int dy, int recyclerScrollY);
     }
 }
