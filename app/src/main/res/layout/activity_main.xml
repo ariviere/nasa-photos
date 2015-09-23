@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
@@ -12,8 +12,7 @@
     <RelativeLayout
         android:id="@+id/buttons_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_menu_buttons_height"
-        android:fitsSystemWindows="true">
+        android:layout_height="@dimen/main_menu_buttons_height">
 
         <View
             android:id="@+id/buttons_separator"
@@ -26,8 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/buttons_separator"
-            android:padding="12dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:background="@drawable/selectable_background_yellow"
             android:textColor="@android:color/white"
             android:gravity="center"
@@ -40,8 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/buttons_separator"
-            android:padding="12dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:background="@drawable/selectable_background_yellow"
             android:textColor="@android:color/white"
             android:gravity="center"
@@ -58,4 +55,4 @@
         android:layout_below="@id/buttons_container"
         android:background="@drawable/shadow_bottom" />
 
-</FrameLayout>
+</RelativeLayout>

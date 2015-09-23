@@ -12,9 +12,6 @@
              which is used to tint widgets -->
         <item name="colorAccent">@color/yellow</item>
 
-        <!-- translucent status bar (only for API 19) -->
-        <item name="android:windowTranslucentStatus">true</item>
-
         <!-- enable activity transition -->
         <item name="android:windowContentTransitions">true</item>
 

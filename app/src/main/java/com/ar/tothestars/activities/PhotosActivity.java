@@ -3,9 +3,7 @@ package com.ar.tothestars.activities;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.ar.tothestars.R;
 import com.ar.tothestars.adapters.CategoriesAdapter;
@@ -19,6 +17,7 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
     private View mBrowseButton;
     private View mFavoritesButton;
     private View mButtonsContainer;
+    private View mHeaderShadow;
     private boolean mButtonsContainerHidden = false;
 
     @Override
@@ -34,6 +33,7 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
 
 
         mButtonsContainer = findViewById(R.id.buttons_container);
+        mHeaderShadow = findViewById(R.id.toolbar_shadow);
         mBrowseButton = findViewById(R.id.browse_button);
         mFavoritesButton = findViewById(R.id.favorites_button);
 
@@ -68,6 +68,8 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onPageSelected(int position) {
+        showButtonsContainer();
+
         switch (position) {
             case 0:
                 mBrowseButton.setSelected(true);
@@ -103,6 +105,7 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
         if (!mButtonsContainerHidden) {
             mButtonsContainerHidden = true;
             mButtonsContainer.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height));
+            mHeaderShadow.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height));
         }
     }
 
@@ -110,6 +113,7 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
         if (mButtonsContainerHidden) {
             mButtonsContainerHidden = false;
             mButtonsContainer.animate().translationY(0);
+            mHeaderShadow.animate().translationY(0);
         }
     }
 }
