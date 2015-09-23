@@ -8,13 +8,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.ar.tothestars.R;
 import com.ar.tothestars.activities.SinglePhotoActivity;
 import com.ar.tothestars.models.APODPhoto;
 
 import java.io.IOException;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by ariviere on 07/09/15.
@@ -43,11 +46,7 @@ public class PhotoHelper {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                WallpaperManager.getInstance(context).setBitmap(photoBitmap);
-                            } catch (IOException e) {
-                                Log.e("desktop wallpaper", e.getMessage());
-                            }
+                            setWallpaper(context, photoBitmap);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -83,8 +82,9 @@ public class PhotoHelper {
 
     /**
      * Use to start full screen photo activity
+     *
      * @param context context
-     * @param photo photo to fullscreen
+     * @param photo   photo to fullscreen
      */
     public static void startFullScreen(Context context, APODPhoto photo) {
         Intent intent = new Intent(context, SinglePhotoActivity.class);
@@ -93,5 +93,20 @@ public class PhotoHelper {
 //                        .makeSceneTransitionAnimation((Activity)getContext(), mPhotoView, "robot");
 //
         context.startActivity(intent);
+    }
+
+    private static void setWallpaper(final Context context, Bitmap bitmap) {
+        Observable.just(bitmap)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        try {
+                            WallpaperManager.getInstance(context).setBitmap(bitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
