@@ -13,4 +13,8 @@
     <string name="photo_shared">photo_shared</string>
     <string name="browse">Browse</string>
     <string name="favorites">Favorites</string>
+    <string name="favorite_added">New favorite added</string>
+    <string name="already_favorite">This photo is already in your favorites</string>
+    <string name="no_favorite">You haven\'t saved any favorite yet</string>
+    <string name="favorite_removed">Photo removed from your favorites</string>
 </resources>

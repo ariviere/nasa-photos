@@ -4,6 +4,7 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -28,6 +29,7 @@ public class PhotoHelper {
      * photo for activity info transfert
      */
     public static final String PHOTO = "photo";
+    public static final String PHOTOS_ARRAY = "photosArray4";
 
     private PhotoHelper() {
     }
@@ -93,6 +95,22 @@ public class PhotoHelper {
 //                        .makeSceneTransitionAnimation((Activity)getContext(), mPhotoView, "robot");
 //
         context.startActivity(intent);
+    }
+
+    public static String getSavedDates(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                "APODphotosPreferences", Context.MODE_PRIVATE);
+
+        return sharedPref.getString(PHOTOS_ARRAY, "");
+    }
+
+    public static void setSavedDates(Context context, String savedDates) {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                "APODphotosPreferences", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(PHOTOS_ARRAY, savedDates);
+        editor.apply();
     }
 
     private static void setWallpaper(final Context context, Bitmap bitmap) {

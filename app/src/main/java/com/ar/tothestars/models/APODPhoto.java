@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -104,5 +105,15 @@ public class APODPhoto implements Parcelable {
         }
 
         return true;
+    }
+
+    public Calendar getCalendarDate() {
+        Calendar dateCal = Calendar.getInstance();
+        dateCal.setTime(getDate());
+        dateCal.set(Calendar.HOUR, 0);
+        dateCal.set(Calendar.MINUTE, 0);
+        dateCal.set(Calendar.SECOND, 0);
+        dateCal.set(Calendar.MILLISECOND, 0);
+        return dateCal;
     }
 }

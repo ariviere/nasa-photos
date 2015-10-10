@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,11 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -49,7 +55,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     private TextView mErrorMessageView;
 
     private View mPlusFab;
-    private View mSaveFab;
+    private ImageView mSaveFab;
     private View mFullScreenFab;
     private View mShareFab;
     private View mDesktopFab;
@@ -87,12 +93,38 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.photo_plus_fab:
                 if (mSaveFab.getAlpha() == 0) {
+                    if (PhotoHelper.getSavedDates(getContext()).contains(
+                            String.valueOf(mPhoto.getCalendarDate().getTimeInMillis()))) {
+                        mSaveFab.setImageResource(R.drawable.ic_add);
+                    }
+
                     showFabButtons();
                 } else {
                     hideFabButtons();
                 }
                 break;
             case R.id.photo_save_fab:
+                Calendar dateCal = mPhoto.getCalendarDate();
+
+                String allDates = PhotoHelper.getSavedDates(getContext());
+                String[] allDatesSplitted = allDates.split(";");
+
+                if (!Arrays.asList(allDatesSplitted).contains(String.valueOf(dateCal.getTimeInMillis()))) {
+                    if (!TextUtils.isEmpty(allDates)) {
+                        allDates += ";";
+                    }
+
+                    allDates += dateCal.getTimeInMillis();
+                    PhotoHelper.setSavedDates(getContext(), allDates);
+                    Toast.makeText(getContext(),  R.string.favorite_added, Toast.LENGTH_SHORT).show();
+                } else {
+                    allDates = allDates.replace(";" + dateCal.getTime(), "");
+                    allDates = allDates.replace(String.valueOf(dateCal.getTime()), "");
+                    PhotoHelper.setSavedDates(getContext(), allDates);
+
+                    Toast.makeText(getContext(),  R.string.favorite_removed, Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             case R.id.photo_share_fab:
                 PhotoHelper.sharePicture(getContext(), mPhotoBitmap, mPhoto.getTitle());
@@ -156,7 +188,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
         mProgress = findViewById(R.id.progress);
 
         mPlusFab = findViewById(R.id.photo_plus_fab);
-        mSaveFab = findViewById(R.id.photo_save_fab);
+        mSaveFab = (ImageView) findViewById(R.id.photo_save_fab);
         mFullScreenFab = findViewById(R.id.photo_fullscreen_fab);
         mDesktopFab = findViewById(R.id.photo_desktop_fab);
         mShareFab = findViewById(R.id.photo_share_fab);

@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ar.tothestars.ui.APODPhotosList;
+import com.ar.tothestars.ui.APODSavedPhotosList;
 
 /**
  * Created by ariviere on 12/09/15.
  */
-public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Listener {
+public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Listener,
+    APODSavedPhotosList.Listener {
 
     private Context mContext;
     private Listener mListener;
@@ -28,10 +30,10 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
                 container.addView(photosList);
                 return photosList;
             case 1:
-                APODPhotosList photosList2 = new APODPhotosList(mContext);
-                photosList2.setListener(this);
-                container.addView(photosList2);
-                return photosList2;
+                APODSavedPhotosList savedPhotosList = new APODSavedPhotosList(mContext);
+                savedPhotosList.setListener(this);
+                container.addView(savedPhotosList);
+                return savedPhotosList;
             default:
                 return null;
         }
