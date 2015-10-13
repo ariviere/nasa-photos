@@ -40,6 +40,8 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     private ImageView mPhotoView;
     private TextView mErrorMessageView;
 
+    private int mPhotoPosition;
+
     private View mPlusFab;
     private ImageView mSaveFab;
     private View mFullScreenFab;
@@ -113,7 +115,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                     Toast.makeText(getContext(), R.string.favorite_removed, Toast.LENGTH_SHORT).show();
                 }
 
-                mListener.onSaveButtonClicked();
+                mListener.onSaveButtonClicked(mPhotoPosition);
 
                 break;
             case R.id.photo_share_fab:
@@ -131,8 +133,10 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public void setModel(APODPhoto photo) {
+    public void setModel(APODPhoto photo, int position) {
         mPhoto = photo;
+
+        mPhotoPosition = position;
 
         mPhotoTitle.setText(photo.getTitle());
 
@@ -233,6 +237,6 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
         /**
          * Triggered when the button saved is clicked
          */
-        void onSaveButtonClicked();
+        void onSaveButtonClicked(int position);
     }
 }

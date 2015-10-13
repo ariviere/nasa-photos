@@ -36,7 +36,7 @@ public class PhotosPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         APODPhotoItem APODPhotoItem = new APODPhotoItem(mContext);
-        APODPhotoItem.setModel(mPhotos.get(position));
+        APODPhotoItem.setModel(mPhotos.get(position), position);
 
         container.addView(APODPhotoItem);
 

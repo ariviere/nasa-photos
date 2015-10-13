@@ -12,14 +12,13 @@ import java.util.ArrayList;
 /**
  * Created by ariviere on 09/08/15.
  */
-public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.ViewHolder>
+public class SavedPhotosListAdapter extends RecyclerView.Adapter<SavedPhotosListAdapter.ViewHolder>
     implements APODPhotoItem.Listener {
 
     private final Context mContext;
     private ArrayList<APODPhoto> mPhotos;
-    private Listener mListener;
 
-    public PhotosListAdapter(Context context, ArrayList<APODPhoto> mPhotos) {
+    public SavedPhotosListAdapter(Context context, ArrayList<APODPhoto> mPhotos) {
         this.mContext = context;
         this.mPhotos = mPhotos;
     }
@@ -52,17 +51,9 @@ public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.Vi
 
     @Override
     public void onSaveButtonClicked(int position) {
-        mListener.onSavedButtonClicked();
+        mPhotos.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mPhotos.size());
     }
 
-    public void setmListener(Listener mListener) {
-        this.mListener = mListener;
-    }
-
-    public interface Listener {
-        /**
-         * Triggered when user click on the save button
-         */
-        void onSavedButtonClicked();
-    }
 }

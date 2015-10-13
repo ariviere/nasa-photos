@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.ar.tothestars.Credentials;
 import com.ar.tothestars.R;
 import com.ar.tothestars.adapters.PhotosListAdapter;
+import com.ar.tothestars.adapters.SavedPhotosListAdapter;
 import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
@@ -34,7 +35,7 @@ import retrofit.client.Response;
 /**
  * Created by ariviere on 12/09/15.
  */
-public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener {
+public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener  {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -46,10 +47,9 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
 
     private List<String> mSavedDates;
     private ArrayList<APODPhoto> mPhotos;
-    private PhotosListAdapter mAdapter;
+    private SavedPhotosListAdapter mAdapter;
 
 
-    private boolean mIsLoadingMore = false;
     private int mLoadingPhotos;
 
     private Date mCurrentDateRequested;
@@ -86,6 +86,7 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
         if (mPhotos != null) {
             mPhotos.clear();
         }
+        mRefreshLayout.setRefreshing(true);
         startGettingPhotos();
     }
 
@@ -144,7 +145,6 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
             mLoadingPhotos--;
             getPhoto(getNextDate());
         } else {
-            mIsLoadingMore = false;
             mAdapter.notifyDataSetChanged();
             mRefreshLayout.setRefreshing(false);
         }
@@ -160,7 +160,7 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
     }
 
     private void initRecyclerView() {
-        mAdapter = new PhotosListAdapter(getContext(), mPhotos);
+        mAdapter = new SavedPhotosListAdapter(getContext(), mPhotos);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -181,6 +181,14 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setProgressViewEndTarget(false, 400);
 
+        mRefreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                getViewTreeObserver().removeOnPreDrawListener(this);
+                mRefreshLayout.setRefreshing(true);
+                return false;
+            }
+        });
         mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
@@ -193,6 +201,7 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
                 return false;
             }
         });
+
 
         mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 

@@ -30,7 +30,7 @@ import retrofit.client.Response;
  * Created by ariviere on 12/09/15.
  */
 public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener,
-    PhotosListAdapter.Listener {
+        PhotosListAdapter.Listener {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
@@ -182,7 +182,14 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setProgressViewEndTarget(false, 400);
-
+        mRefreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                getViewTreeObserver().removeOnPreDrawListener(this);
+                mRefreshLayout.setRefreshing(true);
+                return false;
+            }
+        });
         mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
