@@ -29,7 +29,8 @@ import retrofit.client.Response;
 /**
  * Created by ariviere on 12/09/15.
  */
-public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener {
+public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener,
+    PhotosListAdapter.Listener {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
@@ -83,6 +84,11 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     public void onRefresh() {
         mPhotos.clear();
         startGettingPhotos();
+    }
+
+    @Override
+    public void onSavedButtonClicked() {
+        mListener.onFavoriteAdded();
     }
 
     /**
@@ -149,6 +155,7 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
 
     private void initRecyclerView() {
         mAdapter = new PhotosListAdapter(getContext(), mPhotos);
+        mAdapter.setmListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -217,5 +224,10 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
          * @param recyclerScrollY total scrollY
          */
         void onRecyclerScrolled(int dy, int recyclerScrollY);
+
+        /**
+         * called when a favorite is added
+         */
+        void onFavoriteAdded();
     }
 }

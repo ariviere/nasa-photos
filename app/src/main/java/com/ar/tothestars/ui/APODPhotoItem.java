@@ -1,45 +1,30 @@
 package com.ar.tothestars.ui;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
-import android.app.WallpaperManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ar.tothestars.R;
-import com.ar.tothestars.activities.SinglePhotoActivity;
 import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
 
 import rx.Observable;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by ariviere on 07/06/15.
@@ -49,6 +34,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     private APODPhoto mPhoto;
     private Bitmap mPhotoBitmap;
     private View mProgress;
+    private Listener mListener;
 
     private TextView mPhotoTitle;
     private ImageView mPhotoView;
@@ -95,7 +81,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                 if (mSaveFab.getAlpha() == 0) {
                     if (PhotoHelper.getSavedDates(getContext()).contains(
                             String.valueOf(mPhoto.getCalendarDate().getTimeInMillis()))) {
-                        mSaveFab.setImageResource(R.drawable.ic_add);
+                        mSaveFab.setImageResource(R.drawable.ic_no_favorite);
                     }
 
                     showFabButtons();
@@ -116,14 +102,18 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
 
                     allDates += dateCal.getTimeInMillis();
                     PhotoHelper.setSavedDates(getContext(), allDates);
-                    Toast.makeText(getContext(),  R.string.favorite_added, Toast.LENGTH_SHORT).show();
+                    mSaveFab.setImageResource(R.drawable.ic_no_favorite);
+                    Toast.makeText(getContext(), R.string.favorite_added, Toast.LENGTH_SHORT).show();
                 } else {
-                    allDates = allDates.replace(";" + dateCal.getTime(), "");
-                    allDates = allDates.replace(String.valueOf(dateCal.getTime()), "");
+                    allDates = allDates.replace(";" + dateCal.getTimeInMillis(), "");
+                    allDates = allDates.replace(String.valueOf(dateCal.getTimeInMillis()), "");
                     PhotoHelper.setSavedDates(getContext(), allDates);
 
-                    Toast.makeText(getContext(),  R.string.favorite_removed, Toast.LENGTH_SHORT).show();
+                    mSaveFab.setImageResource(R.drawable.ic_favorite);
+                    Toast.makeText(getContext(), R.string.favorite_removed, Toast.LENGTH_SHORT).show();
                 }
+
+                mListener.onSaveButtonClicked();
 
                 break;
             case R.id.photo_share_fab:
@@ -206,6 +196,10 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
         mTranslateMidSecondRange = getResources().getDimension(R.dimen.fab_translate_mid_second);
     }
 
+    public void setListener(Listener listener) {
+        mListener = listener;
+    }
+
     private void showFabButtons() {
         mPlusFab.animate().rotation(45);
         mSaveFab.animate().translationX(-mTranslateFirstRange).alpha(1);
@@ -233,6 +227,12 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                 .translationY(0)
                 .translationX(0)
                 .alpha(0);
+    }
 
+    public interface Listener {
+        /**
+         * Triggered when the button saved is clicked
+         */
+        void onSaveButtonClicked();
     }
 }

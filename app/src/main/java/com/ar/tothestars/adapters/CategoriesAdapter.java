@@ -16,6 +16,7 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
 
     private Context mContext;
     private Listener mListener;
+    private APODSavedPhotosList mSavedPhotosList;
 
     public CategoriesAdapter(Context context) {
         mContext = context;
@@ -30,10 +31,10 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
                 container.addView(photosList);
                 return photosList;
             case 1:
-                APODSavedPhotosList savedPhotosList = new APODSavedPhotosList(mContext);
-                savedPhotosList.setListener(this);
-                container.addView(savedPhotosList);
-                return savedPhotosList;
+                mSavedPhotosList = new APODSavedPhotosList(mContext);
+                mSavedPhotosList.setListener(this);
+                container.addView(mSavedPhotosList);
+                return mSavedPhotosList;
             default:
                 return null;
         }
@@ -57,6 +58,11 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
     @Override
     public void onRecyclerScrolled(int dy, int recyclerScrollY) {
         mListener.onRecyclerScrolled(dy, recyclerScrollY);
+    }
+
+    @Override
+    public void onFavoriteAdded() {
+        mSavedPhotosList.onRefresh();
     }
 
     /**
