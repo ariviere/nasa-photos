@@ -24,6 +24,9 @@
         </activity>
 
         <activity android:name=".activities.SinglePhotoActivity" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="ccb0149aba84b09eadac80e9a43f01d1e893e31e" />
     </application>
 
 </manifest>

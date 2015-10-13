@@ -7,6 +7,8 @@ import android.view.View;
 
 import com.ar.tothestars.R;
 import com.ar.tothestars.adapters.CategoriesAdapter;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 
 public class PhotosActivity extends AppCompatActivity implements View.OnClickListener,
@@ -23,6 +25,7 @@ public class PhotosActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
