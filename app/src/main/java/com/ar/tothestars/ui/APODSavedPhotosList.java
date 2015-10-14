@@ -185,7 +185,9 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener(this);
-                mRefreshLayout.setRefreshing(true);
+                if (!TextUtils.isEmpty(PhotoHelper.getSavedDates(getContext()))) {
+                    mRefreshLayout.setRefreshing(true);
+                }
                 return false;
             }
         });
