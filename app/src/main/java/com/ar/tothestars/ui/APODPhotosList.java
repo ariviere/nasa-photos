@@ -34,7 +34,7 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
     private final static String PHOTOS = "photos";
-    private final static int LOADING_PHOTOS_COUNT = 2;
+    private final static int LOADING_PHOTOS_COUNT = 7;
 
     private SimpleDateFormat mDateFormat;
     private Calendar mCalendarReference;
