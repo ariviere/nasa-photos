@@ -125,8 +125,6 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     }
 
     private void addPhoto(APODPhoto photo) {
-        photo.setDate(mCurrentDateRequested);
-
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
             mPhotos.add(photo);
         } else {

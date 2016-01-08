@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.ar.tothestars.Credentials;
 import com.ar.tothestars.R;
-import com.ar.tothestars.adapters.PhotosListAdapter;
 import com.ar.tothestars.adapters.SavedPhotosListAdapter;
 import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
@@ -37,10 +36,6 @@ import retrofit.client.Response;
  */
 public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener  {
 
-    private final static String DATE_FORMAT = "yyyy-MM-dd";
-
-    private SimpleDateFormat mDateFormat;
-
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -52,7 +47,6 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
 
     private int mLoadingPhotos;
 
-    private Date mCurrentDateRequested;
     private Listener mListener;
 
     private int mRecyclerScrollY = 0;
@@ -87,6 +81,7 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
             mPhotos.clear();
         }
         mRefreshLayout.setRefreshing(true);
+        mAdapter.notifyDataSetChanged();
         startGettingPhotos();
     }
 
@@ -116,11 +111,10 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
         }
     }
 
-    private void getPhoto(Date photoDate) {
-        String dateFormatted = mDateFormat.format(photoDate);
+    private void getPhoto(String photoDate) {
 
         APODManager.getClient()
-                .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<APODPhoto>() {
+                .getPhoto(photoDate, true, Credentials.NASA_KEY, new Callback<APODPhoto>() {
                     @Override
                     public void success(APODPhoto photo, Response response) {
                         addPhoto(photo);
@@ -134,8 +128,6 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
     }
 
     private void addPhoto(APODPhoto photo) {
-        photo.setDate(mCurrentDateRequested);
-
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
             mPhotos.add(photo);
         }
@@ -150,13 +142,8 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
         }
     }
 
-    private Date getNextDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(Long.parseLong(mSavedDates.get(mLoadingPhotos - 1)));
-
-        mCurrentDateRequested = calendar.getTime();
-
-        return mCurrentDateRequested;
+    private String getNextDate() {
+        return mSavedDates.get(mLoadingPhotos - 1);
     }
 
     private void initRecyclerView() {
@@ -204,8 +191,6 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
             }
         });
 
-
-        mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);

@@ -10,7 +10,7 @@ import retrofit.http.Query;
  * Created by ariviere on 23/04/15.
  */
 public interface APODClient {
-    @GET("/nasa/planetary/apod")
+    @GET("/planetary/apod")
     void getPhoto(
             @Query("date") String date,
             @Query("concept_tags") boolean has_concept_tags,

@@ -29,7 +29,7 @@ public class PhotoHelper {
      * photo for activity info transfert
      */
     public static final String PHOTO = "photo";
-    public static final String PHOTOS_ARRAY = "photosArray4";
+    public static final String PHOTOS_ARRAY = "photosArray6";
 
     private PhotoHelper() {
     }

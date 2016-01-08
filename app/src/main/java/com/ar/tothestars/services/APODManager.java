@@ -7,7 +7,7 @@ import retrofit.RestAdapter;
  */
 public class APODManager {
 
-    public static final String APOD_URL = "https://api.data.gov";
+    public static final String APOD_URL = "https://api.nasa.gov";
 
     public static APODClient getClient() {
         RestAdapter restAdapter = new RestAdapter.Builder()

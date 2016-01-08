@@ -20,7 +20,6 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Calendar;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -82,7 +81,7 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
             case R.id.photo_plus_fab:
                 if (mSaveFab.getAlpha() == 0) {
                     if (PhotoHelper.getSavedDates(getContext()).contains(
-                            String.valueOf(mPhoto.getCalendarDate().getTimeInMillis()))) {
+                            String.valueOf(mPhoto.getDate()))) {
                         mSaveFab.setImageResource(R.drawable.ic_no_favorite);
                     }
 
@@ -92,23 +91,23 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                 }
                 break;
             case R.id.photo_save_fab:
-                Calendar dateCal = mPhoto.getCalendarDate();
 
                 String allDates = PhotoHelper.getSavedDates(getContext());
                 String[] allDatesSplitted = allDates.split(";");
 
-                if (!Arrays.asList(allDatesSplitted).contains(String.valueOf(dateCal.getTimeInMillis()))) {
+                if (!Arrays.asList(allDatesSplitted).contains(mPhoto.getDate())) {
                     if (!TextUtils.isEmpty(allDates)) {
                         allDates += ";";
                     }
 
-                    allDates += dateCal.getTimeInMillis();
+                    allDates += mPhoto.getDate();
+
                     PhotoHelper.setSavedDates(getContext(), allDates);
                     mSaveFab.setImageResource(R.drawable.ic_no_favorite);
                     Toast.makeText(getContext(), R.string.favorite_added, Toast.LENGTH_SHORT).show();
                 } else {
-                    allDates = allDates.replace(";" + dateCal.getTimeInMillis(), "");
-                    allDates = allDates.replace(String.valueOf(dateCal.getTimeInMillis()), "");
+                    allDates = allDates.replace(";" + mPhoto.getDate(), "");
+                    allDates = allDates.replace(String.valueOf(mPhoto.getDate()), "");
                     PhotoHelper.setSavedDates(getContext(), allDates);
 
                     mSaveFab.setImageResource(R.drawable.ic_favorite);
@@ -116,17 +115,21 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                 }
 
                 mListener.onSaveButtonClicked(mPhotoPosition);
+                hideFabButtons();
 
                 break;
             case R.id.photo_share_fab:
                 PhotoHelper.sharePicture(getContext(), mPhotoBitmap, mPhoto.getTitle());
+                hideFabButtons();
                 break;
             case R.id.photo_src:
             case R.id.photo_fullscreen_fab:
                 PhotoHelper.startFullScreen(getContext(), mPhoto);
+                hideFabButtons();
                 break;
             case R.id.photo_desktop_fab:
                 PhotoHelper.setPictureAsWallpaper(getContext(), mPhotoBitmap);
+                hideFabButtons();
                 break;
             default:
                 break;

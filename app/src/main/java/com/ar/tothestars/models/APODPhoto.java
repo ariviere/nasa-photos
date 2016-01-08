@@ -3,10 +3,6 @@ package com.ar.tothestars.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * Created by ariviere on 23/04/15.
  */
@@ -28,8 +24,7 @@ public class APODPhoto implements Parcelable {
     private String title;
     private String url;
     private String explanation;
-    private Date date;
-    private ArrayList<String> concepts;
+    private String date;
 
     public APODPhoto() {
     }
@@ -38,9 +33,8 @@ public class APODPhoto implements Parcelable {
         this.title = in.readString();
         this.url = in.readString();
         this.explanation = in.readString();
-        long tmpDate = in.readLong();
-        this.date = tmpDate == -1 ? null : new Date(tmpDate);
-        this.concepts = (ArrayList<String>) in.readSerializable();
+        this.date = in.readString();
+
     }
 
     @Override
@@ -53,8 +47,7 @@ public class APODPhoto implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.url);
         dest.writeString(this.explanation);
-        dest.writeLong(date != null ? date.getTime() : -1);
-        dest.writeSerializable(this.concepts);
+        dest.writeString(this.date);
     }
 
     public String getTitle() {
@@ -81,20 +74,12 @@ public class APODPhoto implements Parcelable {
         this.explanation = explanation;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
-    }
-
-    public ArrayList<String> getConcepts() {
-        return concepts;
-    }
-
-    public void setConcepts(ArrayList<String> concepts) {
-        this.concepts = concepts;
     }
 
     public boolean isValid() {
@@ -107,13 +92,4 @@ public class APODPhoto implements Parcelable {
         return true;
     }
 
-    public Calendar getCalendarDate() {
-        Calendar dateCal = Calendar.getInstance();
-        dateCal.setTime(getDate());
-        dateCal.set(Calendar.HOUR, 0);
-        dateCal.set(Calendar.MINUTE, 0);
-        dateCal.set(Calendar.SECOND, 0);
-        dateCal.set(Calendar.MILLISECOND, 0);
-        return dateCal;
-    }
 }
