@@ -1,20 +1,27 @@
 package com.ar.tothestars.helpers;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.ar.tothestars.R;
-import com.ar.tothestars.activities.SinglePhotoActivity;
+import com.ar.tothestars.showphoto.SinglePhotoActivity;
 import com.ar.tothestars.models.APODPhoto;
 
 import java.io.IOException;
+import java.net.URL;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -38,48 +45,83 @@ public class PhotoHelper {
      * Used to set a picture as wallpaper for the user
      *
      * @param context     context of the view
-     * @param photoBitmap bitmap of the photo to be show as desktop
+     * @param photo bitmap of the photo to be show as desktop
      */
-    public static void setPictureAsWallpaper(final Context context, final Bitmap photoBitmap) {
-        if (photoBitmap != null) {
-            new AlertDialog.Builder(context)
-                    .setTitle("Desktop picture")
-                    .setMessage("Use this photo as desktop picture ?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            setWallpaper(context, photoBitmap);
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+    public static void setPictureAsWallpaper(final Context context, final APODPhoto photo) {
+        // get base bitmap of the photo
+        new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.desktop_picture))
+                .setMessage(context.getString(R.string.desktop_picture_desc))
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Observable.just(photo.getHdurl())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+                                        try {
+                                            URL url = new URL(s);
+                                            final Bitmap photoBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
-                        }
-                    })
-                    .show();
+                                            if (photoBitmap != null) {
+                                                setWallpaper(context, photoBitmap);
+                                            }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-        }
+                    }
+                })
+                .show();
     }
 
     /**
      * Use to share a photo
      *
      * @param context     current context
-     * @param photoBitmap photo to share
-     * @param photoTitle  title of the photo to share
+     * @param photo       photo to share
      */
-    public static void sharePicture(Context context, Bitmap photoBitmap, String photoTitle) {
-        // convert bitmap to Uri
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photoBitmap, photoTitle, null);
-        Uri photoUri = Uri.parse(path);
+    public static void sharePicture(final Context context, final APODPhoto photo) {
+        // get base bitmap of the photo
+        Observable.just(photo.getUrl())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        try {
+                            URL url = new URL(s);
+                            final Bitmap photoBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
-        // share image with Uri
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, photoUri);
-        intent.setType("image/jpeg");
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_photo)));
+                            if (photoBitmap != null) {
+                                // convert bitmap to Uri
+                                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions((Activity) context, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                                }
+
+                                String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photoBitmap, photo.getTitle(), null);
+                                Uri photoUri = Uri.parse(path);
+
+                                // share image with Uri
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_SEND);
+                                intent.putExtra(Intent.EXTRA_STREAM, photoUri);
+                                intent.setType("image/jpeg");
+                                context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_photo)));
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     /**

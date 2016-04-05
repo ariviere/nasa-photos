@@ -1,8 +1,6 @@
 package com.ar.tothestars.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -17,39 +15,32 @@ import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
-
-import rx.Observable;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by ariviere on 07/06/15.
  */
 public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
 
-    private APODPhoto mPhoto;
-    private Bitmap mPhotoBitmap;
-    private View mProgress;
-    private Listener mListener;
+    private APODPhoto photo;
+    private View progress;
+    private Listener listener;
 
-    private TextView mPhotoTitle;
-    private ImageView mPhotoView;
-    private TextView mErrorMessageView;
+    private TextView photoTitle;
+    private ImageView photoView;
+    private TextView errorMessageView;
 
-    private int mPhotoPosition;
+    private int photoPosition;
 
-    private View mPlusFab;
-    private ImageView mSaveFab;
-    private View mFullScreenFab;
-    private View mShareFab;
-    private View mDesktopFab;
+    private View plusFab;
+    private ImageView saveFab;
+    private View fullScreenFab;
+    private View shareFab;
+    private View desktopFab;
 
-    private float mTranslateFirstRange;
-    private float mTranslateMidFirstRange;
-    private float mTranslateMidSecondRange;
+    private float translateFirstRange;
+    private float translateMidFirstRange;
+    private float translateMidSecondRange;
 
     public APODPhotoItem(Context context) {
         super(context);
@@ -79,10 +70,10 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.photo_plus_fab:
-                if (mSaveFab.getAlpha() == 0) {
+                if (saveFab.getAlpha() == 0) {
                     if (PhotoHelper.getSavedDates(getContext()).contains(
-                            String.valueOf(mPhoto.getDate()))) {
-                        mSaveFab.setImageResource(R.drawable.ic_no_favorite);
+                            String.valueOf(photo.getDate()))) {
+                        saveFab.setImageResource(R.drawable.ic_no_favorite);
                     }
 
                     showFabButtons();
@@ -91,44 +82,19 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
                 }
                 break;
             case R.id.photo_save_fab:
-
-                String allDates = PhotoHelper.getSavedDates(getContext());
-                String[] allDatesSplitted = allDates.split(";");
-
-                if (!Arrays.asList(allDatesSplitted).contains(mPhoto.getDate())) {
-                    if (!TextUtils.isEmpty(allDates)) {
-                        allDates += ";";
-                    }
-
-                    allDates += mPhoto.getDate();
-
-                    PhotoHelper.setSavedDates(getContext(), allDates);
-                    mSaveFab.setImageResource(R.drawable.ic_no_favorite);
-                    Toast.makeText(getContext(), R.string.favorite_added, Toast.LENGTH_SHORT).show();
-                } else {
-                    allDates = allDates.replace(";" + mPhoto.getDate(), "");
-                    allDates = allDates.replace(String.valueOf(mPhoto.getDate()), "");
-                    PhotoHelper.setSavedDates(getContext(), allDates);
-
-                    mSaveFab.setImageResource(R.drawable.ic_favorite);
-                    Toast.makeText(getContext(), R.string.favorite_removed, Toast.LENGTH_SHORT).show();
-                }
-
-                mListener.onSaveButtonClicked(mPhotoPosition);
-                hideFabButtons();
-
+                savePhoto();
                 break;
             case R.id.photo_share_fab:
-                PhotoHelper.sharePicture(getContext(), mPhotoBitmap, mPhoto.getTitle());
+                PhotoHelper.sharePicture(getContext(), photo);
                 hideFabButtons();
                 break;
             case R.id.photo_src:
             case R.id.photo_fullscreen_fab:
-                PhotoHelper.startFullScreen(getContext(), mPhoto);
+                PhotoHelper.startFullScreen(getContext(), photo);
                 hideFabButtons();
                 break;
             case R.id.photo_desktop_fab:
-                PhotoHelper.setPictureAsWallpaper(getContext(), mPhotoBitmap);
+                PhotoHelper.setPictureAsWallpaper(getContext(), photo);
                 hideFabButtons();
                 break;
             default:
@@ -137,41 +103,26 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     }
 
     public void setModel(APODPhoto photo, int position) {
-        mPhoto = photo;
+        this.photo = photo;
 
-        mPhotoPosition = position;
+        photoPosition = position;
 
-        mPhotoTitle.setText(photo.getTitle());
+        photoTitle.setText(photo.getTitle());
 
         // display photo with picasso
         Picasso.with(getContext())
-                .load(mPhoto.getUrl())
+                .load(this.photo.getUrl())
                 .fit()
                 .centerCrop()
-                .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
+                .into(photoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
-                        mProgress.animate().alpha(0);
+                        progress.animate().alpha(0);
                     }
 
                     @Override
                     public void onError() {
-                        mErrorMessageView.setVisibility(View.VISIBLE);
-                    }
-                });
-
-        // get base bitmap of the photo
-        Observable.just(mPhoto.getUrl())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        try {
-                            URL url = new URL(s);
-                            mPhotoBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        errorMessageView.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -179,61 +130,88 @@ public class APODPhotoItem extends FrameLayout implements View.OnClickListener {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.item_photo, this);
 
-        mPhotoTitle = (TextView) findViewById(R.id.photo_title);
-        mPhotoView = (ImageView) findViewById(R.id.photo_src);
-        mErrorMessageView = (TextView) findViewById(R.id.error_message);
-        mProgress = findViewById(R.id.progress);
+        photoTitle = (TextView) findViewById(R.id.photo_title);
+        photoView = (ImageView) findViewById(R.id.photo_src);
+        errorMessageView = (TextView) findViewById(R.id.error_message);
+        progress = findViewById(R.id.progress);
 
-        mPlusFab = findViewById(R.id.photo_plus_fab);
-        mSaveFab = (ImageView) findViewById(R.id.photo_save_fab);
-        mFullScreenFab = findViewById(R.id.photo_fullscreen_fab);
-        mDesktopFab = findViewById(R.id.photo_desktop_fab);
-        mShareFab = findViewById(R.id.photo_share_fab);
+        plusFab = findViewById(R.id.photo_plus_fab);
+        saveFab = (ImageView) findViewById(R.id.photo_save_fab);
+        fullScreenFab = findViewById(R.id.photo_fullscreen_fab);
+        desktopFab = findViewById(R.id.photo_desktop_fab);
+        shareFab = findViewById(R.id.photo_share_fab);
 
-        mPhotoView.setOnClickListener(this);
+        photoView.setOnClickListener(this);
 
-        mPlusFab.setOnClickListener(this);
-        mSaveFab.setOnClickListener(this);
-        mFullScreenFab.setOnClickListener(this);
-        mDesktopFab.setOnClickListener(this);
-        mShareFab.setOnClickListener(this);
+        plusFab.setOnClickListener(this);
+        saveFab.setOnClickListener(this);
+        fullScreenFab.setOnClickListener(this);
+        desktopFab.setOnClickListener(this);
+        shareFab.setOnClickListener(this);
 
-        mTranslateFirstRange = getResources().getDimension(R.dimen.fab_translate_first);
-        mTranslateMidFirstRange = getResources().getDimension(R.dimen.fab_translate_mid_first);
-        mTranslateMidSecondRange = getResources().getDimension(R.dimen.fab_translate_mid_second);
+        translateFirstRange = getResources().getDimension(R.dimen.fab_translate_first);
+        translateMidFirstRange = getResources().getDimension(R.dimen.fab_translate_mid_first);
+        translateMidSecondRange = getResources().getDimension(R.dimen.fab_translate_mid_second);
     }
 
     public void setListener(Listener listener) {
-        mListener = listener;
+        this.listener = listener;
     }
 
     private void showFabButtons() {
-        mPlusFab.animate().rotation(45);
-        mSaveFab.animate().translationX(-mTranslateFirstRange).alpha(1);
-        mShareFab.animate().translationY(-mTranslateFirstRange).alpha(1);
-        mDesktopFab.animate()
-                .translationX(-mTranslateMidFirstRange)
-                .translationY(-mTranslateMidSecondRange)
+        plusFab.animate().rotation(45);
+        saveFab.animate().translationX(-translateFirstRange).alpha(1);
+        shareFab.animate().translationY(-translateFirstRange).alpha(1);
+        desktopFab.animate()
+                .translationX(-translateMidFirstRange)
+                .translationY(-translateMidSecondRange)
                 .alpha(1);
-        mFullScreenFab.animate()
-                .translationY(-mTranslateMidFirstRange)
-                .translationX(-mTranslateMidSecondRange)
+        fullScreenFab.animate()
+                .translationY(-translateMidFirstRange)
+                .translationX(-translateMidSecondRange)
                 .alpha(1);
 
     }
 
     private void hideFabButtons() {
-        mPlusFab.animate().rotation(0);
-        mSaveFab.animate().translationX(0).alpha(0);
-        mShareFab.animate().translationY(0).alpha(0);
-        mDesktopFab.animate()
+        plusFab.animate().rotation(0);
+        saveFab.animate().translationX(0).alpha(0);
+        shareFab.animate().translationY(0).alpha(0);
+        desktopFab.animate()
                 .translationX(0)
                 .translationY(0)
                 .alpha(0);
-        mFullScreenFab.animate()
+        fullScreenFab.animate()
                 .translationY(0)
                 .translationX(0)
                 .alpha(0);
+    }
+
+    private void savePhoto() {
+        String allDates = PhotoHelper.getSavedDates(getContext());
+        String[] allDatesSplitted = allDates.split(";");
+
+        if (!Arrays.asList(allDatesSplitted).contains(photo.getDate())) {
+            if (!TextUtils.isEmpty(allDates)) {
+                allDates += ";";
+            }
+
+            allDates += photo.getDate();
+
+            PhotoHelper.setSavedDates(getContext(), allDates);
+            saveFab.setImageResource(R.drawable.ic_no_favorite);
+            Toast.makeText(getContext(), R.string.favorite_added, Toast.LENGTH_SHORT).show();
+        } else {
+            allDates = allDates.replace(";" + photo.getDate(), "");
+            allDates = allDates.replace(String.valueOf(photo.getDate()), "");
+            PhotoHelper.setSavedDates(getContext(), allDates);
+
+            saveFab.setImageResource(R.drawable.ic_favorite);
+            Toast.makeText(getContext(), R.string.favorite_removed, Toast.LENGTH_SHORT).show();
+        }
+
+        listener.onSaveButtonClicked(photoPosition);
+        hideFabButtons();
     }
 
     public interface Listener {

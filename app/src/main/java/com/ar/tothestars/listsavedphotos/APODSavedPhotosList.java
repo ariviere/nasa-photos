@@ -1,4 +1,4 @@
-package com.ar.tothestars.ui;
+package com.ar.tothestars.listsavedphotos;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,20 +12,15 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.ar.tothestars.Credentials;
+import com.ar.tothestars.services.Credentials;
 import com.ar.tothestars.R;
-import com.ar.tothestars.adapters.SavedPhotosListAdapter;
 import com.ar.tothestars.helpers.PhotoHelper;
 import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -36,20 +31,19 @@ import retrofit.client.Response;
  */
 public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayout.OnRefreshListener  {
 
-    private SwipeRefreshLayout mRefreshLayout;
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
+    private SwipeRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
 
-    private List<String> mSavedDates;
-    private ArrayList<APODPhoto> mPhotos;
-    private SavedPhotosListAdapter mAdapter;
+    private List<String> savedDates;
+    private ArrayList<APODPhoto> photos;
+    private SavedPhotosListAdapter adapter;
 
+    private int loadingPhotos;
 
-    private int mLoadingPhotos;
+    private Listener listener;
 
-    private Listener mListener;
-
-    private int mRecyclerScrollY = 0;
+    private int recyclerScrollY = 0;
 
     public APODSavedPhotosList(Context context) {
         super(context);
@@ -77,11 +71,11 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
-        if (mPhotos != null) {
-            mPhotos.clear();
+        if (photos != null) {
+            photos.clear();
         }
-        mRefreshLayout.setRefreshing(true);
-        mAdapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(true);
+        adapter.notifyDataSetChanged();
         startGettingPhotos();
     }
 
@@ -91,7 +85,7 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
      * @param listener listener
      */
     public void setListener(Listener listener) {
-        mListener = listener;
+        this.listener = listener;
     }
 
     private void startGettingPhotos() {
@@ -99,13 +93,13 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
 
         if (TextUtils.isEmpty(prefDates)) {
             findViewById(R.id.no_favorite).setVisibility(View.VISIBLE);
-            mRefreshLayout.setRefreshing(false);
+            refreshLayout.setRefreshing(false);
         } else {
             findViewById(R.id.no_favorite).setVisibility(View.GONE);
-            mSavedDates = Arrays.asList(prefDates.split(";"));
+            savedDates = Arrays.asList(prefDates.split(";"));
 
-            if (mSavedDates.size() > 0) {
-                mLoadingPhotos = mSavedDates.size();
+            if (savedDates.size() > 0) {
+                loadingPhotos = savedDates.size();
                 getPhoto(getNextDate());
             }
         }
@@ -129,34 +123,34 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
 
     private void addPhoto(APODPhoto photo) {
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
-            mPhotos.add(photo);
+            photos.add(photo);
         }
 
         // load another photo until count is finished
-        if (mLoadingPhotos > 1) {
-            mLoadingPhotos--;
+        if (loadingPhotos > 1) {
+            loadingPhotos--;
             getPhoto(getNextDate());
         } else {
-            mAdapter.notifyDataSetChanged();
-            mRefreshLayout.setRefreshing(false);
+            adapter.notifyDataSetChanged();
+            refreshLayout.setRefreshing(false);
         }
     }
 
     private String getNextDate() {
-        return mSavedDates.get(mLoadingPhotos - 1);
+        return savedDates.get(loadingPhotos - 1);
     }
 
     private void initRecyclerView() {
-        mAdapter = new SavedPhotosListAdapter(getContext(), mPhotos);
-        mRecyclerView.setAdapter(mAdapter);
+        adapter = new SavedPhotosListAdapter(getContext(), photos);
+        recyclerView.setAdapter(adapter);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                mRecyclerScrollY += dy;
-                mListener.onRecyclerScrolled(dy, mRecyclerScrollY);
+                recyclerScrollY += dy;
+                listener.onRecyclerScrolled(dy, recyclerScrollY);
             }
         });
     }
@@ -164,38 +158,38 @@ public class APODSavedPhotosList extends FrameLayout implements SwipeRefreshLayo
     private void init(final Context context) {
         LayoutInflater.from(context).inflate(R.layout.item_photos_list, this);
 
-        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
-        mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setProgressViewEndTarget(false, 400);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setProgressViewEndTarget(false, 400);
 
-        mRefreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        refreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener(this);
                 if (!TextUtils.isEmpty(PhotoHelper.getSavedDates(getContext()))) {
-                    mRefreshLayout.setRefreshing(true);
+                    refreshLayout.setRefreshing(true);
                 }
                 return false;
             }
         });
-        mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
+        recyclerView.setHasFixedSize(true);
 
-        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                mRecyclerView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height), 0, 0);
+                recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                recyclerView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height), 0, 0);
 
                 return false;
             }
         });
 
 
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
 
-        mPhotos = new ArrayList<>();
+        photos = new ArrayList<>();
 
         initRecyclerView();
 

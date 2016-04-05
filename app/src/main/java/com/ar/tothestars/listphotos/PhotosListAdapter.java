@@ -1,4 +1,4 @@
-package com.ar.tothestars.adapters;
+package com.ar.tothestars.listphotos;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -15,29 +15,31 @@ import java.util.ArrayList;
 public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.ViewHolder>
     implements APODPhotoItem.Listener {
 
-    private final Context mContext;
-    private ArrayList<APODPhoto> mPhotos;
-    private Listener mListener;
+    private final Context context;
+    private ArrayList<APODPhoto> photos;
+    private Listener listener;
 
-    public PhotosListAdapter(Context context, ArrayList<APODPhoto> mPhotos) {
-        this.mContext = context;
-        this.mPhotos = mPhotos;
+    public PhotosListAdapter(Context context, ArrayList<APODPhoto> photos) {
+        this.context = context;
+        this.photos = photos;
     }
+
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        return new ViewHolder(new APODPhotoItem(mContext));
+        return new ViewHolder(new APODPhotoItem(context));
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        viewHolder.photoView.setModel(mPhotos.get(i), i);
+        viewHolder.photoView.setModel(photos.get(i), i);
         viewHolder.photoView.setListener(this);
     }
 
     @Override
     public int getItemCount() {
-        return mPhotos.size();
+        return photos.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,11 +54,11 @@ public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.Vi
 
     @Override
     public void onSaveButtonClicked(int position) {
-        mListener.onSavedButtonClicked();
+        listener.onSavedButtonClicked();
     }
 
-    public void setmListener(Listener mListener) {
-        this.mListener = mListener;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     public interface Listener {

@@ -23,6 +23,7 @@ public class APODPhoto implements Parcelable {
 
     private String title;
     private String url;
+    private String hdurl;
     private String explanation;
     private String date;
 
@@ -32,6 +33,7 @@ public class APODPhoto implements Parcelable {
     private APODPhoto(Parcel in) {
         this.title = in.readString();
         this.url = in.readString();
+        this.hdurl = in.readString();
         this.explanation = in.readString();
         this.date = in.readString();
 
@@ -46,6 +48,7 @@ public class APODPhoto implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.title);
         dest.writeString(this.url);
+        dest.writeString(this.hdurl);
         dest.writeString(this.explanation);
         dest.writeString(this.date);
     }
@@ -80,6 +83,14 @@ public class APODPhoto implements Parcelable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getHdurl() {
+        return hdurl;
+    }
+
+    public void setHdurl(String hdurl) {
+        this.hdurl = hdurl;
     }
 
     public boolean isValid() {

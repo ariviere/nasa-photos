@@ -1,4 +1,4 @@
-package com.ar.tothestars.ui;
+package com.ar.tothestars.listphotos;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,11 +10,10 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.ar.tothestars.Credentials;
 import com.ar.tothestars.R;
-import com.ar.tothestars.adapters.PhotosListAdapter;
 import com.ar.tothestars.models.APODPhoto;
 import com.ar.tothestars.services.APODManager;
+import com.ar.tothestars.services.Credentials;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,28 +32,26 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
         PhotosListAdapter.Listener {
 
     private final static String DATE_FORMAT = "yyyy-MM-dd";
-    private final static String PHOTOS = "photos";
     private final static int LOADING_PHOTOS_COUNT = 7;
 
-    private SimpleDateFormat mDateFormat;
-    private Calendar mCalendarReference;
+    private SimpleDateFormat dateFormat;
+    private Calendar calendarReference;
 
-    private SwipeRefreshLayout mRefreshLayout;
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
+    private SwipeRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
 
-    private ArrayList<APODPhoto> mPhotos;
-    private PhotosListAdapter mAdapter;
+    private ArrayList<APODPhoto> photos;
+    private PhotosListAdapter adapter;
 
-    private int mPhotosWithError = 0;
+    private int photosWithError = 0;
 
-    private boolean mIsLoadingMore = false;
-    private int mLoadingPhotos;
+    private boolean isLoadingMore = false;
+    private int loadingPhotos;
 
-    private Date mCurrentDateRequested;
-    private Listener mListener;
+    private Listener listener;
 
-    private int mRecyclerScrollY = 0;
+    private int recyclerScrollY = 0;
 
     public APODPhotosList(Context context) {
         super(context);
@@ -82,13 +79,15 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        mPhotos.clear();
+        photos.clear();
+        photosWithError = 0;
+        calendarReference = Calendar.getInstance();
         startGettingPhotos();
     }
 
     @Override
     public void onSavedButtonClicked() {
-        mListener.onFavoriteAdded();
+        listener.onFavoriteAdded();
     }
 
     /**
@@ -97,18 +96,17 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
      * @param listener listener
      */
     public void setListener(Listener listener) {
-        mListener = listener;
+        this.listener = listener;
     }
 
     private void startGettingPhotos() {
-        mLoadingPhotos = LOADING_PHOTOS_COUNT;
-        Calendar calendar = (Calendar) mCalendarReference.clone();
-        mCurrentDateRequested = calendar.getTime();
+        loadingPhotos = LOADING_PHOTOS_COUNT;
+        Calendar calendar = (Calendar) calendarReference.clone();
         getPhoto(calendar.getTime());
     }
 
     private void getPhoto(Date photoDate) {
-        String dateFormatted = mDateFormat.format(photoDate);
+        String dateFormatted = dateFormat.format(photoDate);
 
         APODManager.getClient()
                 .getPhoto(dateFormatted, true, Credentials.NASA_KEY, new Callback<APODPhoto>() {
@@ -126,48 +124,46 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
 
     private void addPhoto(APODPhoto photo) {
         if (photo.isValid() && photo.getUrl() != null && !photo.getUrl().equals("")) {
-            mPhotos.add(photo);
+            photos.add(photo);
         } else {
-            mPhotosWithError++;
+            photosWithError++;
         }
 
         // load another photo until count is finished
-        if (mLoadingPhotos > 0) {
-            mLoadingPhotos--;
+        if (loadingPhotos > 0) {
+            loadingPhotos--;
             getPhoto(getNextDate());
         } else {
-            mIsLoadingMore = false;
-            mAdapter.notifyDataSetChanged();
-            mRefreshLayout.setRefreshing(false);
+            isLoadingMore = false;
+            adapter.notifyDataSetChanged();
+            refreshLayout.setRefreshing(false);
         }
     }
 
     private Date getNextDate() {
-        Calendar calendar = (Calendar) mCalendarReference.clone();
-        calendar.add(Calendar.DATE, -(mPhotos.size() + mPhotosWithError));
-
-        mCurrentDateRequested = calendar.getTime();
+        Calendar calendar = (Calendar) calendarReference.clone();
+        calendar.add(Calendar.DATE, -(photos.size() + photosWithError));
 
         return calendar.getTime();
     }
 
     private void initRecyclerView() {
-        mAdapter = new PhotosListAdapter(getContext(), mPhotos);
-        mAdapter.setmListener(this);
-        mRecyclerView.setAdapter(mAdapter);
+        adapter = new PhotosListAdapter(getContext(), photos);
+        adapter.setListener(this);
+        recyclerView.setAdapter(adapter);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                mRecyclerScrollY += dy;
-                mListener.onRecyclerScrolled(dy, mRecyclerScrollY);
+                recyclerScrollY += dy;
+                listener.onRecyclerScrolled(dy, recyclerScrollY);
 
-                if (!mIsLoadingMore
-                        && mLayoutManager.findLastVisibleItemPosition() > mPhotos.size() - 3) {
-                    mIsLoadingMore = true;
-                    mLoadingPhotos = LOADING_PHOTOS_COUNT;
+                if (!isLoadingMore
+                        && layoutManager.findLastVisibleItemPosition() > photos.size() - 3) {
+                    isLoadingMore = true;
+                    loadingPhotos = LOADING_PHOTOS_COUNT;
                     getPhoto(getNextDate());
                 }
             }
@@ -177,42 +173,42 @@ public class APODPhotosList extends FrameLayout implements SwipeRefreshLayout.On
     private void init(final Context context) {
         LayoutInflater.from(context).inflate(R.layout.item_photos_list, this);
 
-        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
-        mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setProgressViewEndTarget(false, 400);
-        mRefreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.photo_refresh);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setProgressViewEndTarget(false, 400);
+        refreshLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener(this);
-                mRefreshLayout.setRefreshing(true);
+                refreshLayout.setRefreshing(true);
                 return false;
             }
         });
-        mRecyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView = (RecyclerView) findViewById(R.id.photos_recycler_view);
+        recyclerView.setHasFixedSize(true);
 
-        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                mRecyclerView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height), 0, 0);
+                recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                recyclerView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.main_menu_buttons_height), 0, 0);
 
                 return false;
             }
         });
 
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
 
-        mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        mCalendarReference = Calendar.getInstance();
-        mCalendarReference.add(Calendar.HOUR, -2);
+        dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        calendarReference = Calendar.getInstance();
+        calendarReference.add(Calendar.HOUR, -2);
 
-        mPhotos = new ArrayList<>();
+        photos = new ArrayList<>();
 
         initRecyclerView();
 
-        if (mPhotos.size() == 0) {
+        if (photos.size() == 0) {
             startGettingPhotos();
         }
 

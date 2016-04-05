@@ -1,4 +1,4 @@
-package com.ar.tothestars.adapters;
+package com.ar.tothestars.listphotos;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -15,17 +15,17 @@ import java.util.ArrayList;
  */
 public class PhotosPagerAdapter extends PagerAdapter {
 
-    private Context mContext;
-    private ArrayList<APODPhoto> mPhotos;
+    private Context context;
+    private ArrayList<APODPhoto> photos;
 
     public PhotosPagerAdapter(Context context, ArrayList<APODPhoto> photos) {
-        mContext = context;
-        mPhotos = photos;
+        this.context = context;
+        this.photos = photos;
     }
 
     @Override
     public int getCount() {
-        return mPhotos.size();
+        return photos.size();
     }
 
     @Override
@@ -35,8 +35,8 @@ public class PhotosPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        APODPhotoItem APODPhotoItem = new APODPhotoItem(mContext);
-        APODPhotoItem.setModel(mPhotos.get(position), position);
+        APODPhotoItem APODPhotoItem = new APODPhotoItem(context);
+        APODPhotoItem.setModel(photos.get(position), position);
 
         container.addView(APODPhotoItem);
 

@@ -1,4 +1,4 @@
-package com.ar.tothestars.activities;
+package com.ar.tothestars.showphoto;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +15,8 @@ import uk.co.senab.photoview.PhotoView;
  */
 public class SinglePhotoActivity extends AppCompatActivity {
 
-    private APODPhoto mPhoto;
-    private PhotoView mPhotoView;
+    private APODPhoto photo;
+    private PhotoView photoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +24,15 @@ public class SinglePhotoActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_single_photo);
 
-        mPhoto = getIntent().getParcelableExtra(PhotoHelper.PHOTO);
+        photo = getIntent().getParcelableExtra(PhotoHelper.PHOTO);
 
-        mPhotoView = (PhotoView) findViewById(R.id.photo_src);
+        photoView = (PhotoView) findViewById(R.id.photo_src);
 
         Picasso.with(this)
-                .load(mPhoto.getUrl())
+                .load(photo.getUrl())
                 .fit()
                 .centerInside()
-                .into(mPhotoView, new com.squareup.picasso.Callback.EmptyCallback() {
+                .into(photoView, new com.squareup.picasso.Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
                     }

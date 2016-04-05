@@ -1,12 +1,12 @@
-package com.ar.tothestars.adapters;
+package com.ar.tothestars.navigation;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ar.tothestars.ui.APODPhotosList;
-import com.ar.tothestars.ui.APODSavedPhotosList;
+import com.ar.tothestars.listphotos.APODPhotosList;
+import com.ar.tothestars.listsavedphotos.APODSavedPhotosList;
 
 /**
  * Created by ariviere on 12/09/15.
@@ -14,27 +14,27 @@ import com.ar.tothestars.ui.APODSavedPhotosList;
 public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Listener,
     APODSavedPhotosList.Listener {
 
-    private Context mContext;
-    private Listener mListener;
-    private APODSavedPhotosList mSavedPhotosList;
+    private Context context;
+    private Listener listener;
+    private APODSavedPhotosList savedPhotosList;
 
     public CategoriesAdapter(Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         switch (position) {
             case 0:
-                APODPhotosList photosList = new APODPhotosList(mContext);
+                APODPhotosList photosList = new APODPhotosList(context);
                 photosList.setListener(this);
                 container.addView(photosList);
                 return photosList;
             case 1:
-                mSavedPhotosList = new APODSavedPhotosList(mContext);
-                mSavedPhotosList.setListener(this);
-                container.addView(mSavedPhotosList);
-                return mSavedPhotosList;
+                savedPhotosList = new APODSavedPhotosList(context);
+                savedPhotosList.setListener(this);
+                container.addView(savedPhotosList);
+                return savedPhotosList;
             default:
                 return null;
         }
@@ -57,12 +57,12 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
 
     @Override
     public void onRecyclerScrolled(int dy, int recyclerScrollY) {
-        mListener.onRecyclerScrolled(dy, recyclerScrollY);
+        listener.onRecyclerScrolled(dy, recyclerScrollY);
     }
 
     @Override
     public void onFavoriteAdded() {
-        mSavedPhotosList.onRefresh();
+        savedPhotosList.onRefresh();
     }
 
     /**
@@ -71,7 +71,7 @@ public class CategoriesAdapter extends PagerAdapter implements APODPhotosList.Li
      * @param listener listener
      */
     public void setListener(Listener listener) {
-        mListener = listener;
+        this.listener = listener;
     }
 
     /**
